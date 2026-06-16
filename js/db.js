@@ -9,7 +9,7 @@
   const KEY = 'legoland.db.v1';
   // Bump SEED_VERSION whenever the demo dataset changes so returning
   // visitors automatically get the refreshed demo instead of stale data.
-  const SEED_VERSION = 2;
+  const SEED_VERSION = 3;
 
   // ---- status model -------------------------------------------------
   const STATUS = {
@@ -47,6 +47,7 @@
       { sku: 'LG-10294', name: 'טיטאניק',                 barcode: '5702016852448', price: 2599, qty: 4 },
       { sku: 'LG-40747', name: 'נרקיסים',                 barcode: '5702017369884', price: 69,  qty: 80 },
       { sku: 'LG-21341', name: 'הוקוס פוקוס',             barcode: '5702017153308', price: 899, qty: 8 },
+      { sku: 'TEST-1',   name: '★ פריט טסט - תשלום בדיקה', barcode: '9999999999999', price: 1,  qty: 999 },
     ];
 
     const db = {
