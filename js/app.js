@@ -51,11 +51,58 @@
     const items = DB.items();
     const low = items.filter(i => i.qty <= (DB.settings().lowStock || 5)).length;
     const todaySales = orders.filter(o => o.creditTxn).reduce((s, o) => s + o.creditTxn.amount, 0);
+    const hint = '<div class="muted" style="font-size:.72rem;margin-top:4px">לחץ לפירוט לפי ברקוד ›</div>';
     $('#kpis').innerHTML = `
-      <div class="kpi kpi--a"><h4>הזמנות בתהליך</h4><div class="v">${inProc.length}</div></div>
-      <div class="kpi kpi--b"><h4>מכירות מאושרות</h4><div class="v">${nis(todaySales)}</div></div>
-      <div class="kpi kpi--c"><h4>פריטים במלאי</h4><div class="v">${items.reduce((s, i) => s + i.qty, 0)}</div></div>
-      <div class="kpi kpi--d"><h4>פריטים במלאי נמוך</h4><div class="v">${low}</div></div>`;
+      <div class="kpi kpi--a" data-kpi="orders" style="cursor:pointer"><h4>הזמנות בתהליך</h4><div class="v">${inProc.length}</div>${hint}</div>
+      <div class="kpi kpi--b" data-kpi="sales" style="cursor:pointer"><h4>מכירות מאושרות</h4><div class="v">${nis(todaySales)}</div>${hint}</div>
+      <div class="kpi kpi--c" data-kpi="stock" style="cursor:pointer"><h4>פריטים במלאי</h4><div class="v">${items.reduce((s, i) => s + i.qty, 0)}</div>${hint}</div>
+      <div class="kpi kpi--d" data-kpi="low" style="cursor:pointer"><h4>פריטים במלאי נמוך</h4><div class="v">${low}</div>${hint}</div>`;
+  }
+
+  // ---- KPI drill-down: data per barcode ----------------------------
+  function openKpiDrill(kind) {
+    const items = DB.items();
+    const low = DB.settings().lowStock || 5;
+    const wrap = (head, body) => `<div class="table-wrap"><table class="tbl"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+
+    if (kind === 'stock') {
+      const total = items.reduce((s, i) => s + i.qty, 0);
+      const rows = items.slice().sort((a, b) => b.qty - a.qty).map(it =>
+        `<tr><td>${it.barcode || '-'}</td><td>${it.name}</td><td class="num">${it.sku}</td><td class="num">${nis(it.price)}</td><td><span class="chip ${it.qty <= low ? 'chip--low' : 'chip--ok'}">${it.qty}</span></td></tr>`).join('');
+      openModal('פריטים במלאי - לפי ברקוד', `<div class="hint">סה"כ ${total} יחידות ב-${items.length} פריטים.</div>` +
+        wrap('<th>ברקוד</th><th>שם</th><th>מק"ט</th><th>מחיר</th><th>כמות</th>', rows));
+
+    } else if (kind === 'low') {
+      const lowItems = items.filter(i => i.qty <= low).sort((a, b) => a.qty - b.qty);
+      const rows = lowItems.map(it =>
+        `<tr><td>${it.barcode || '-'}</td><td>${it.name}</td><td class="num">${it.sku}</td><td><span class="chip chip--low">${it.qty}</span></td></tr>`).join('')
+        || `<tr><td colspan="4" class="empty">אין פריטים במלאי נמוך</td></tr>`;
+      openModal('מלאי נמוך - לפי ברקוד', `<div class="hint">פריטים עם יתרה ≤ ${low} - מומלץ להזמין מהספק.</div>` +
+        wrap('<th>ברקוד</th><th>שם</th><th>מק"ט</th><th>יתרה</th>', rows));
+
+    } else if (kind === 'sales') {
+      const rep = DB.inventoryReport().filter(r => r.soldUnits > 0).sort((a, b) => b.soldAmount - a.soldAmount);
+      const total = rep.reduce((s, r) => s + r.soldAmount, 0);
+      const rows = rep.map(r =>
+        `<tr><td>${r.barcode || '-'}</td><td>${r.name}</td><td class="num">${r.sku}</td><td class="num">${r.soldUnits}</td><td class="num">${nis(r.soldAmount)}</td></tr>`).join('')
+        || `<tr><td colspan="5" class="empty">אין מכירות מאושרות</td></tr>`;
+      openModal('מכירות מאושרות - לפי ברקוד', `<div class="hint">סה"כ מכירות שאושרו ע"י חברת האשראי: ${nis(total)}.</div>` +
+        wrap('<th>ברקוד</th><th>שם</th><th>מק"ט</th><th>יח\' שנמכרו</th><th>סכום</th>', rows));
+
+    } else if (kind === 'orders') {
+      const inProc = DB.ordersInProcess();
+      const map = {};
+      inProc.forEach(o => o.lines.forEach(l => {
+        const it = items.find(i => i.sku === l.sku) || {};
+        const m = map[l.sku] || (map[l.sku] = { barcode: it.barcode, name: it.name || l.sku, sku: l.sku, units: 0, orders: new Set() });
+        m.units += l.qty; m.orders.add(o.id);
+      }));
+      const rows = Object.values(map).sort((a, b) => b.units - a.units).map(r =>
+        `<tr><td>${r.barcode || '-'}</td><td>${r.name}</td><td class="num">${r.sku}</td><td class="num">${r.units}</td><td class="num">${r.orders.size}</td></tr>`).join('')
+        || `<tr><td colspan="5" class="empty">אין הזמנות בתהליך</td></tr>`;
+      openModal('הזמנות בתהליך - לפי ברקוד', `<div class="hint">${inProc.length} הזמנות פעילות. פירוט היחידות התפוסות לפי ברקוד:</div>` +
+        wrap('<th>ברקוד</th><th>שם</th><th>מק"ט</th><th>יח\' בהזמנות</th><th>מס\' הזמנות</th>', rows));
+    }
   }
 
   function renderLiveOrders() {
@@ -233,10 +280,12 @@
 
     const shiftCards = DB.shifts().map(s => {
       const on = active && active.id === s.id;
-      return `<div class="kpi ${on ? 'kpi--b' : ''}" style="border-inline-start-color:${on ? 'var(--green)' : 'var(--line)'}">
+      const team = DB.shiftRoster(s.id);
+      return `<div class="kpi ${on ? 'kpi--b' : ''}" data-shift="${s.id}" style="cursor:pointer;border-inline-start-color:${on ? 'var(--green)' : 'var(--line)'}">
         <h4>${s.name} ${on ? '· <span style="color:var(--green)">פעילה כעת</span>' : ''}</h4>
-        <div class="v" style="font-size:1.05rem">${s.empName}</div>
-        <div class="muted">${s.from}-${s.to} · עובד ${s.empNo}</div></div>`;
+        <div class="v" style="font-size:1.05rem">${team.length} עובדים</div>
+        <div class="muted">${s.from}-${s.to}</div>
+        <div class="muted" style="font-size:.74rem;margin-top:4px">${team.map(e => e.name).join(', ') || '-'} · לחץ לפירוט ›</div></div>`;
     }).join('');
     const rows = queue.map((o) => {
       const e = elapsed(o.paymentApprovedAt);
@@ -284,6 +333,31 @@
     });
   }
   function packing() { viewPacking(); }
+
+  // shift roster drill-down: who is on each shift
+  function openShiftRoster(shiftId) {
+    const sh = DB.shifts().find(s => s.id === shiftId); if (!sh) return;
+    const team = DB.shiftRoster(shiftId);
+    const active = DB.currentShift();
+    const isOn = active && active.id === shiftId;
+    const rows = team.map(e => `<tr>
+      <td class="num">${e.empNo}</td><td>${e.name}</td><td>${sh.from}-${sh.to}</td>
+      <td><span class="elapsed" data-elapsed="${e.shiftStart || ''}">${e.shiftStart ? elapsed(e.shiftStart).txt : '-'}</span></td>
+      <td>${isOn ? '<span class="chip chip--ok">במשמרת</span>' : '<span class="chip chip--new">מחוץ למשמרת</span>'}</td>
+      <td><button class="btn btn--tiny btn--ok" data-setpacker="${e.empNo}">בחר כאורז</button></td>
+    </tr>`).join('') || `<tr><td colspan="6" class="empty">אין עובדים משובצים למשמרת</td></tr>`;
+    openModal(`${sh.name} - צוות עובדים`, `
+      <div class="hint">${sh.name} · ${sh.from}-${sh.to} · ${team.length} עובדים משובצים${isOn ? ' · המשמרת פעילה כעת' : ''}.</div>
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>מס' עובד</th><th>שם</th><th>שעות</th><th>במשמרת מ-</th><th>סטטוס</th><th>פעולה</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+      <div class="actions" style="margin-top:12px"><button class="btn btn--line" id="backToPack">→ חזרה לאריזה</button></div>`);
+    $('#backToPack').addEventListener('click', viewPacking);
+    $$('#modalBody [data-setpacker]').forEach(b => b.addEventListener('click', () => {
+      packing._emp = DB.employees().find(x => x.empNo === b.dataset.setpacker);
+      toast(`${packing._emp.name} נבחר/ה כאורז פעיל`); viewPacking();
+    }));
+  }
 
   function packOrder(orderId) {
     const emp = packing._emp || DB.onShiftEmployee() || DB.employees()[0];
@@ -578,9 +652,14 @@
     _openView = b.dataset.view;
     ({ inventory: viewInventory, orders: viewOrders, packing: viewPacking, shipping: viewShipping, reports: () => viewReports(), orderlink: viewOrderLink })[_openView]();
   });
-  // sub-tab clicks inside reports
+  // KPI cards → per-barcode drill-down
+  $('#kpis').addEventListener('click', (e) => {
+    const c = e.target.closest('[data-kpi]'); if (c) { _openView = null; openKpiDrill(c.dataset.kpi); }
+  });
+  // sub-tab clicks inside reports + shift cards in packing
   document.body.addEventListener('click', (e) => {
-    const s = e.target.closest('[data-rtab]'); if (s) viewReports(s.dataset.rtab);
+    const s = e.target.closest('[data-rtab]'); if (s) { viewReports(s.dataset.rtab); return; }
+    const sh = e.target.closest('[data-shift]'); if (sh) openShiftRoster(sh.dataset.shift);
   });
   $('#modal').addEventListener('click', (e) => { if (e.target.matches('[data-close]')) _openView = null; });
 

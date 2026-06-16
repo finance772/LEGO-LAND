@@ -52,12 +52,16 @@
       movements: [],
       orders: [],
       shifts: [
-        { id: 'morning',   name: 'משמרת בוקר',   from: '08:00', to: '14:00', empNo: 'A-201', empName: 'ורה' },
-        { id: 'afternoon', name: 'משמרת צהריים', from: '14:00', to: '18:00', empNo: 'A-202', empName: 'מירי' },
+        { id: 'morning',   name: 'משמרת בוקר',   from: '08:00', to: '14:00' },
+        { id: 'afternoon', name: 'משמרת צהריים', from: '14:00', to: '18:00' },
       ],
       employees: [
         { empNo: 'A-201', name: 'ורה',   shift: 'morning',   shiftStart: ago(180) },
-        { empNo: 'A-202', name: 'מירי', shift: 'afternoon', shiftStart: ago(95) },
+        { empNo: 'A-203', name: 'אורי',  shift: 'morning',   shiftStart: ago(168) },
+        { empNo: 'A-205', name: 'נועה',  shift: 'morning',   shiftStart: ago(120) },
+        { empNo: 'A-202', name: 'מירי',  shift: 'afternoon', shiftStart: ago(95) },
+        { empNo: 'A-204', name: 'טל',    shift: 'afternoon', shiftStart: ago(82) },
+        { empNo: 'A-206', name: 'רון',   shift: 'afternoon', shiftStart: ago(40) },
       ],
       creditReport: [],          // uploaded from the credit-card company
       counters: { order: 1000, receipt: 5000, movement: 1, txn: 70000 },
@@ -287,6 +291,9 @@
   function employees() { return load().employees.slice(); }
   function shifts() { return load().shifts.slice(); }
 
+  // all employees assigned to a given shift
+  function shiftRoster(shiftId) { return load().employees.filter(e => e.shift === shiftId); }
+
   // which shift covers a given time (default: now). null if outside hours.
   function currentShift(at) {
     const d = at ? new Date(at) : new Date();
@@ -295,11 +302,11 @@
     return load().shifts.find(s => mins >= toMin(s.from) && mins < toMin(s.to)) || null;
   }
 
-  // employee assigned to the active shift (or the on-shift one), if any
+  // first employee on the active shift (default packer), if any
   function onShiftEmployee(at) {
     const sh = currentShift(at);
     if (!sh) return null;
-    return load().employees.find(e => e.empNo === sh.empNo) || { empNo: sh.empNo, name: sh.empName, shift: sh.id };
+    return load().employees.filter(e => e.shift === sh.id)[0] || null;
   }
 
   function startShift(empNo, name, shiftId) {
@@ -307,7 +314,6 @@
     let e = db.employees.find(x => x.empNo === empNo);
     if (e) { e.shiftStart = nowISO(); if (name) e.name = name; if (shiftId) e.shift = shiftId; }
     else { e = { empNo, name: name || empNo, shift: shiftId || null, shiftStart: nowISO() }; db.employees.push(e); }
-    if (shiftId) { const sh = db.shifts.find(s => s.id === shiftId); if (sh) { sh.empNo = e.empNo; sh.empName = e.name; } }
     save();
     return e;
   }
@@ -388,7 +394,7 @@
     STATUS, on, save, reset, load,
     items, reserved, applyInventoryList, movements,
     orders, ordersInProcess, createOrder, approvePayment, setStatus, receiptFor,
-    employees, startShift, shifts, currentShift, onShiftEmployee,
+    employees, startShift, shifts, shiftRoster, currentShift, onShiftEmployee,
     inventoryReport, creditCollectionReport, uploadCreditSettlement,
     user: () => load().user,
     settings: () => load().settings,
