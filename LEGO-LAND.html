@@ -828,8 +828,17 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const S  = DB.STATUS;
 
-  // Real payment (Sumit) checkout page
-  const SUMIT_PAY_URL = 'https://pay.sumit.co.il/e1wv4v/a/doc/qv05t1-d52df400f4-xbi67c/';
+  // Real payment (Sumit) checkout page — dynamic-amount payment page
+  const SUMIT_PAY_URL = 'https://pay.sumit.co.il/e1wv4v/xbiry4/';
+  // Build a checkout URL carrying the order amount. Param name aliases cover
+  // Sumit's likely conventions; adjust here if the page expects another name.
+  function buildPaymentUrl(total, holder, orderId) {
+    const p = new URLSearchParams();
+    ['Amount', 'amount', 'Sum', 'sum', 'Price', 'price'].forEach(k => p.set(k, total));
+    if (holder) p.set('Name', holder);
+    if (orderId) { p.set('ExternalIdentifier', orderId); p.set('order', orderId); }
+    return SUMIT_PAY_URL + (SUMIT_PAY_URL.includes('?') ? '&' : '?') + p.toString();
+  }
 
   // ---- helpers ------------------------------------------------------
   const pad = (n) => String(n).padStart(2, '0');
@@ -1453,11 +1462,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       const total = recompute();
       const o = DB.createOrder({ customer: name, cardHolder: holder, lines });
       toast('הזמנה ' + o.id + ' נקלטה · מעבר לתשלום ' + nis(total));
-      // carry the order amount + details to the checkout page
-      const url = SUMIT_PAY_URL + (SUMIT_PAY_URL.includes('?') ? '&' : '?') +
-        'amount=' + total + '&Amount=' + total + '&sum=' + total +
-        '&name=' + encodeURIComponent(holder) + '&order=' + encodeURIComponent(o.id);
-      window.open(url, '_blank');
+      window.open(buildPaymentUrl(total, holder, o.id), '_blank');
       closeModal();
     });
   }
