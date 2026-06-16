@@ -131,12 +131,13 @@
         <td class="num">${o.id}</td>
         <td>${o.customer}</td>
         <td>${linesText(o)}</td>
+        <td class="num">${nis(orderTotal(o))}</td>
         <td>${chip(o.status)}</td>
         <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${e.txt}</span></td>
         <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
       </tr>`;
     }).join('');
-    $('#liveOrdersTbl tbody').innerHTML = rows || `<tr><td colspan="6" class="empty">אין הזמנות פעילות כרגע</td></tr>`;
+    $('#liveOrdersTbl tbody').innerHTML = rows || `<tr><td colspan="7" class="empty">אין הזמנות פעילות כרגע</td></tr>`;
   }
 
   function renderLiveStock() {
@@ -272,6 +273,7 @@
         <td class="num">${o.id}</td>
         <td>${o.customer}</td>
         <td style="white-space:normal">${skus}</td>
+        <td class="num">${nis(orderTotal(o))}</td>
         <td>${chip(o.status)}</td>
         <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${o.paymentApprovedAt ? e.txt : 'טרם אושר'}</span></td>
         <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
@@ -282,7 +284,7 @@
     openModal('מצב הזמנות - לייב', `
       <div class="hint">סטטוס וזמן מאישור התשלום מתעדכנים בזמן אמת. לכל פריט מוצגים מק"ט, כמות בהזמנה וכמות זמינה במלאי.</div>
       <div class="table-wrap"><table class="tbl"><thead><tr>
-        <th>הזמנה</th><th>לקוח</th><th>פריטים (מק"ט · כמות · זמין)</th><th>סטטוס</th>
+        <th>הזמנה</th><th>לקוח</th><th>פריטים (מק"ט · כמות · זמין)</th><th>סכום הזמנה</th><th>סטטוס</th>
         <th>זמן מאישור</th><th>קבלה</th><th>פעולה</th></tr></thead>
         <tbody>${rows}</tbody></table></div>
     `);

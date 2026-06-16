@@ -9,7 +9,7 @@
   const KEY = 'legoland.db.v1';
   // Bump SEED_VERSION whenever the demo dataset changes so returning
   // visitors automatically get the refreshed demo instead of stale data.
-  const SEED_VERSION = 3;
+  const SEED_VERSION = 4;
 
   // ---- status model -------------------------------------------------
   const STATUS = {
@@ -32,21 +32,21 @@
     const ago = (min) => new Date(t - min * 60000).toISOString();
 
     const items = [
-      { sku: 'LG-10311', name: 'סחלב (Orchid)',            barcode: '5702016915990', price: 199, qty: 40 },
-      { sku: 'LG-21318', name: 'בית העץ (Tree House)',      barcode: '5702016368314', price: 899, qty: 12 },
-      { sku: 'LG-42143', name: 'פרארי דייטונה',            barcode: '5702017156897', price: 1499, qty: 6 },
-      { sku: 'LG-31203', name: 'מפת העולם',                barcode: '5702017153124', price: 749, qty: 9 },
-      { sku: 'LG-75313', name: 'AT-AT מלחמת הכוכבים',       barcode: '5702017155142', price: 2799, qty: 4 },
+      { sku: 'LG-10311', name: 'סחלב (Orchid)',            barcode: '5702016915990', price: 219, qty: 40 },
+      { sku: 'LG-21318', name: 'בית העץ (Tree House)',      barcode: '5702016368314', price: 969, qty: 12 },
+      { sku: 'LG-42143', name: 'פרארי דייטונה',            barcode: '5702017156897', price: 1999, qty: 6 },
+      { sku: 'LG-31203', name: 'מפת העולם',                barcode: '5702017153124', price: 899, qty: 9 },
+      { sku: 'LG-75313', name: 'AT-AT מלחמת הכוכבים',       barcode: '5702017155142', price: 3199, qty: 4 },
       { sku: 'LG-10497', name: 'רכבת גלקסיה',              barcode: '5702017415086', price: 599, qty: 18 },
-      { sku: 'LG-21330', name: 'הבית הבודד (Home Alone)',  barcode: '5702017153131', price: 1099, qty: 7 },
+      { sku: 'LG-21330', name: 'הבית הבודד (Home Alone)',  barcode: '5702017153131', price: 1299, qty: 7 },
       { sku: 'LG-40524', name: 'חמניות',                   barcode: '5702017183152', price: 89,  qty: 60 },
-      { sku: 'LG-71043', name: 'טירת הוגוורטס',            barcode: '5702016667071', price: 3499, qty: 3 },
-      { sku: 'LG-10307', name: 'עץ בונסאי',               barcode: '5702017152646', price: 219, qty: 22 },
+      { sku: 'LG-71043', name: 'טירת הוגוורטס',            barcode: '5702016667071', price: 3699, qty: 3 },
+      { sku: 'LG-10307', name: 'עץ בונסאי',               barcode: '5702017152646', price: 249, qty: 22 },
       { sku: 'LG-21034', name: 'נוף לונדון',              barcode: '5702016368031', price: 199, qty: 15 },
-      { sku: 'LG-42115', name: 'למבורגיני סיאן',          barcode: '5702016617441', price: 1399, qty: 5 },
-      { sku: 'LG-10294', name: 'טיטאניק',                 barcode: '5702016852448', price: 2599, qty: 4 },
+      { sku: 'LG-42115', name: 'למבורגיני סיאן',          barcode: '5702016617441', price: 1699, qty: 5 },
+      { sku: 'LG-10294', name: 'טיטאניק',                 barcode: '5702016852448', price: 2799, qty: 4 },
       { sku: 'LG-40747', name: 'נרקיסים',                 barcode: '5702017369884', price: 69,  qty: 80 },
-      { sku: 'LG-21341', name: 'הוקוס פוקוס',             barcode: '5702017153308', price: 899, qty: 8 },
+      { sku: 'LG-21341', name: 'הוקוס פוקוס',             barcode: '5702017153308', price: 999, qty: 8 },
       { sku: 'TEST-1',   name: '★ פריט טסט - תשלום בדיקה', barcode: '9999999999999', price: 1,  qty: 999 },
     ];
 
