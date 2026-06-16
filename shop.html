@@ -21,30 +21,37 @@
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero__bricks"></div>
+    <div class="hero__deco"><span class="d1"></span><span class="d2"></span><span class="d3"></span><span class="d4"></span></div>
     <div class="hero__in">
-      <h1>חנות הלגו של LEGO-LAND 🧱</h1>
-      <p>ערכות לגו מקוריות לכל גיל - מהקלאסיקות ועד הדגמים החדשים. הזמנה פשוטה, משלוח מהיר עד הבית, ותשלום מאובטח.</p>
+      <span class="hero__badge">🧱 ערכות מקוריות 100% LEGO®</span>
+      <h1>בנו את העולם שלכם<br>עם <span class="hl">LEGO-LAND</span></h1>
+      <p>הקלאסיקות האהובות והדגמים החדשים - במחירים משתלמים, עם משלוח מהיר עד הבית ותשלום מאובטח. הזמנה בכמה קליקים.</p>
       <div class="hero__cta">
-        <button class="btn" id="heroProducts">לכל הערכות ↓</button>
-        <button class="btn btn--ghost" id="heroShop">🛒 פתח סל הזמנה</button>
+        <button class="btn btn--y" id="heroProducts">🛍️ לכל הערכות</button>
+        <button class="btn btn--ghost" id="heroShop">🛒 הסל שלי</button>
       </div>
     </div>
   </section>
 
-  <!-- Promo strip -->
+  <!-- Trust strip -->
   <section class="promos">
-    <div class="promo promo--g"><span class="ico">🚚</span><span>משלוח עד הבית · חינם מעל ₪299</span></div>
-    <div class="promo promo--b"><span class="ico">🔒</span><span>תשלום מאובטח בכרטיס אשראי</span></div>
-    <div class="promo promo--y"><span class="ico">⚡</span><span>אריזה ומשלוח תוך 24 שעות</span></div>
-    <div class="promo promo--r"><span class="ico">🎁</span><span>ערכות מקוריות 100% LEGO®</span></div>
+    <div class="promo promo--g"><span class="ico">🚚</span><span>משלוח עד הבית<br>חינם מעל ₪299</span></div>
+    <div class="promo promo--b"><span class="ico">🔒</span><span>תשלום מאובטח<br>בכרטיס אשראי</span></div>
+    <div class="promo promo--y"><span class="ico">⚡</span><span>אריזה ומשלוח<br>תוך 24 שעות</span></div>
+    <div class="promo promo--r"><span class="ico">🎁</span><span>ערכות מקוריות<br>100% LEGO®</span></div>
   </section>
 
   <!-- Catalog -->
   <section class="section" id="catalog">
     <div class="section__head">
       <h2>הערכות שלנו</h2>
-      <span class="muted">בחרו, הוסיפו לסל ושלמו</span>
+      <span class="muted">בחרו, הוסיפו לסל ושלמו - מאובטח</span>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip on" data-filter="all">הכל</button>
+      <button class="chip" data-filter="0-250">עד ₪250</button>
+      <button class="chip" data-filter="250-600">₪250-600</button>
+      <button class="chip" data-filter="600-99999">₪600 ומעלה</button>
     </div>
     <div class="grid" id="grid"></div>
   </section>
@@ -66,6 +73,12 @@
         <div class="secure">🔒 התשלום מבוצע בעמוד סליקה מאובטח</div>
       </div>
     </aside>
+  </div>
+
+  <!-- Sticky checkout bar -->
+  <div class="bar" id="bar">
+    <div class="bar__info"><small id="barCount">0 פריטים</small><b id="barTotal">₪0</b></div>
+    <button class="bar__btn" id="barCheckout">מעבר לתשלום ›</button>
   </div>
 
   <div class="toast" id="toast"></div>
