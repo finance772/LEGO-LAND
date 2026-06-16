@@ -300,6 +300,13 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       { sku: 'LG-10497', name: 'רכבת גלקסיה',              barcode: '5702017415086', price: 599, qty: 18 },
       { sku: 'LG-21330', name: 'הבית הבודד (Home Alone)',  barcode: '5702017153131', price: 1099, qty: 7 },
       { sku: 'LG-40524', name: 'חמניות',                   barcode: '5702017183152', price: 89,  qty: 60 },
+      { sku: 'LG-71043', name: 'טירת הוגוורטס',            barcode: '5702016667071', price: 3499, qty: 3 },
+      { sku: 'LG-10307', name: 'עץ בונסאי',               barcode: '5702017152646', price: 219, qty: 22 },
+      { sku: 'LG-21034', name: 'נוף לונדון',              barcode: '5702016368031', price: 199, qty: 15 },
+      { sku: 'LG-42115', name: 'למבורגיני סיאן',          barcode: '5702016617441', price: 1399, qty: 5 },
+      { sku: 'LG-10294', name: 'טיטאניק',                 barcode: '5702016852448', price: 2599, qty: 4 },
+      { sku: 'LG-40747', name: 'נרקיסים',                 barcode: '5702017369884', price: 69,  qty: 80 },
+      { sku: 'LG-21341', name: 'הוקוס פוקוס',             barcode: '5702017153308', price: 899, qty: 8 },
     ];
 
     const db = {
@@ -307,9 +314,13 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       items,
       movements: [],
       orders: [],
+      shifts: [
+        { id: 'morning',   name: 'משמרת בוקר',   from: '08:00', to: '14:00', empNo: 'A-201', empName: 'ורה' },
+        { id: 'afternoon', name: 'משמרת צהריים', from: '14:00', to: '18:00', empNo: 'A-202', empName: 'מירי' },
+      ],
       employees: [
-        { empNo: 'A-204', name: 'דנה כהן',  shiftStart: ago(180) },
-        { empNo: 'A-118', name: 'יוסי לוי', shiftStart: ago(95) },
+        { empNo: 'A-201', name: 'ורה',   shift: 'morning',   shiftStart: ago(180) },
+        { empNo: 'A-202', name: 'מירי', shift: 'afternoon', shiftStart: ago(95) },
       ],
       creditReport: [],          // uploaded from the credit-card company
       counters: { order: 1000, receipt: 5000, movement: 1, txn: 70000 },
@@ -529,13 +540,31 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     };
   }
 
-  // -- employees / packing -------------------------------------------
+  // -- employees / packing / shifts ----------------------------------
   function employees() { return load().employees.slice(); }
-  function startShift(empNo, name) {
+  function shifts() { return load().shifts.slice(); }
+
+  // which shift covers a given time (default: now). null if outside hours.
+  function currentShift(at) {
+    const d = at ? new Date(at) : new Date();
+    const mins = d.getHours() * 60 + d.getMinutes();
+    const toMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+    return load().shifts.find(s => mins >= toMin(s.from) && mins < toMin(s.to)) || null;
+  }
+
+  // employee assigned to the active shift (or the on-shift one), if any
+  function onShiftEmployee(at) {
+    const sh = currentShift(at);
+    if (!sh) return null;
+    return load().employees.find(e => e.empNo === sh.empNo) || { empNo: sh.empNo, name: sh.empName, shift: sh.id };
+  }
+
+  function startShift(empNo, name, shiftId) {
     const db = load();
     let e = db.employees.find(x => x.empNo === empNo);
-    if (e) { e.shiftStart = nowISO(); if (name) e.name = name; }
-    else { e = { empNo, name: name || empNo, shiftStart: nowISO() }; db.employees.push(e); }
+    if (e) { e.shiftStart = nowISO(); if (name) e.name = name; if (shiftId) e.shift = shiftId; }
+    else { e = { empNo, name: name || empNo, shift: shiftId || null, shiftStart: nowISO() }; db.employees.push(e); }
+    if (shiftId) { const sh = db.shifts.find(s => s.id === shiftId); if (sh) { sh.empNo = e.empNo; sh.empName = e.name; } }
     save();
     return e;
   }
@@ -616,7 +645,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     STATUS, on, save, reset, load,
     items, reserved, applyInventoryList, movements,
     orders, ordersInProcess, createOrder, approvePayment, setStatus, receiptFor,
-    employees, startShift,
+    employees, startShift, shifts, currentShift, onShiftEmployee,
     inventoryReport, creditCollectionReport, uploadCreditSettlement,
     user: () => load().user,
     settings: () => load().settings,
@@ -992,8 +1021,17 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
   // ============================================================
   function viewPacking() {
     const emps = DB.employees();
-    const current = packing._emp || emps[0];
+    const active = DB.currentShift();
+    const current = packing._emp || DB.onShiftEmployee() || emps[0];
     const queue = DB.orders().filter(o => o.status === 'approved' || o.status === 'packing');
+
+    const shiftCards = DB.shifts().map(s => {
+      const on = active && active.id === s.id;
+      return `<div class="kpi ${on ? 'kpi--b' : ''}" style="border-inline-start-color:${on ? 'var(--green)' : 'var(--line)'}">
+        <h4>${s.name} ${on ? '· <span style="color:var(--green)">פעילה כעת</span>' : ''}</h4>
+        <div class="v" style="font-size:1.05rem">${s.empName}</div>
+        <div class="muted">${s.from}–${s.to} · עובד ${s.empNo}</div></div>`;
+    }).join('');
     const rows = queue.map((o) => {
       const e = elapsed(o.paymentApprovedAt);
       return `<tr>
@@ -1005,14 +1043,19 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       </tr>`;
     }).join('') || `<tr><td colspan="6" class="empty">אין הזמנות לאריזה</td></tr>`;
 
-    const opts = emps.map(e => `<option value="${e.empNo}" ${current && e.empNo === current.empNo ? 'selected' : ''}>${e.empNo} · ${e.name}</option>`).join('');
+    const opts = emps.map(e => `<option value="${e.empNo}" ${current && e.empNo === current.empNo ? 'selected' : ''}>${e.empNo} · ${e.name}${e.shift ? ' (' + (DB.shifts().find(s=>s.id===e.shift)||{}).name + ')' : ''}</option>`).join('');
+    const shiftOpts = DB.shifts().map(s => `<option value="${s.id}" ${active && active.id === s.id ? 'selected' : ''}>${s.name} (${s.from}–${s.to})</option>`).join('');
 
     openModal('אריזה — משמרת', `
+      <h4>לוח משמרות</h4>
+      <div class="kpis" style="padding:0 0 12px">${shiftCards}</div>
+      ${!active ? '<div class="hint">כרגע מחוץ לשעות המשמרת (08:00–18:00). אפשר עדיין לבחור אורז ידנית.</div>' : ''}
       <div class="grid3">
-        <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-204"></div>
+        <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-201"></div>
         <div class="field"><label>שם עובד</label><input id="pkEmpName" placeholder="שם מלא"></div>
-        <div class="field"><label>או בחר עובד פעיל</label><select id="pkEmpSel">${opts}</select></div>
+        <div class="field"><label>משמרת</label><select id="pkShiftSel">${shiftOpts}</select></div>
       </div>
+      <div class="field"><label>או בחר עובד פעיל</label><select id="pkEmpSel">${opts}</select></div>
       <div class="actions"><button class="btn" id="pkShift">כניסה למשמרת</button>
         <span class="muted" id="pkActive">${current ? `אורז פעיל: ${current.empNo} · ${current.name} · מתחילת המשמרת ${elapsed(current.shiftStart).txt}` : 'לא נבחר אורז'}</span></div>
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
@@ -1028,16 +1071,18 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     });
     $('#pkShift').addEventListener('click', () => {
       const no = $('#pkEmpNo').value.trim(), nm = $('#pkEmpName').value.trim();
+      const sh = $('#pkShiftSel').value;
       if (!no) { toast('הזן מספר עובד'); return; }
-      packing._emp = DB.startShift(no, nm);
-      toast(`${packing._emp.name} נכנס/ה למשמרת`); viewPacking();
+      packing._emp = DB.startShift(no, nm, sh);
+      toast(`${packing._emp.name} נכנס/ה ל${(DB.shifts().find(s=>s.id===sh)||{}).name || 'משמרת'}`); viewPacking();
     });
   }
   function packing() { viewPacking(); }
 
   function packOrder(orderId) {
-    const emp = packing._emp || DB.employees()[0];
+    const emp = packing._emp || DB.onShiftEmployee() || DB.employees()[0];
     if (!emp) { toast('בחר אורז למשמרת'); return; }
+    const shiftName = emp.shift ? (DB.shifts().find(s => s.id === emp.shift) || {}).name : '';
     DB.setStatus(orderId, 'packing', { packedBy: emp });
     const o = DB.setStatus(orderId, 'packed', { packedBy: emp });
     const code = `${emp.empNo}-${o.id.replace('ORD-', '')}`;
@@ -1050,6 +1095,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
         <div class="row"><span>פריטים</span><b>${linesText(o)}</b></div>
         <div class="row"><span>קוד אורז</span><b>${code}</b></div>
         <div class="row"><span>אורז</span><b>${emp.empNo} · ${emp.name}</b></div>
+        ${shiftName ? `<div class="row"><span>משמרת</span><b>${shiftName}</b></div>` : ''}
         <div class="row"><span>זמן מאישור תשלום</span><b>${e.txt}</b></div>
         <div class="row"><span>נארז ב־</span><b>${dt(o.packedAt)}</b></div>
         <div class="bc">*${code}*</div>
