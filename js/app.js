@@ -7,6 +7,9 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const S  = DB.STATUS;
 
+  // Real payment (Sumit) checkout page
+  const SUMIT_PAY_URL = 'https://pay.sumit.co.il/e1wv4v/a/doc/qv05t1-d52df400f4-xbi67c/';
+
   // ---- helpers ------------------------------------------------------
   const pad = (n) => String(n).padStart(2, '0');
   const nis = (n) => '₪' + (Math.round(n * 100) / 100).toLocaleString('he-IL');
@@ -586,43 +589,51 @@
   //  VIEW: ORDER LINK (לינק הזמנה)
   // ============================================================
   function viewOrderLink() {
-    const opts = DB.items().map(i => `<option value="${i.sku}">${i.name} - ${i.sku} (זמין ${i.qty})</option>`).join('');
-    openModal('לינק הזמנה - קליטת הזמנה חדשה', `
-      <div class="hint">קליטת הזמנה המקושרת ישירות למלאי. עם אישור התשלום הכמות נגרעת אוטומטית מהמלאי ומתחיל מד הזמן.</div>
+    const itemPrice = (sku) => (DB.items().find(i => i.sku === sku) || {}).price || 0;
+    const opts = DB.items().map(i => `<option value="${i.sku}">${i.name} - ${i.sku} (${nis(i.price)})</option>`).join('');
+    openModal('טופס הזמנה ותשלום', `
+      <div class="hint">מלא/י את פרטי ההזמנה. בלחיצה על "מעבר לתשלום" תועבר/י לדף סליקה מאובטח לתשלום אמיתי, וההזמנה תיקלט מיד במערכת.</div>
       <div class="grid2">
-        <div class="field"><label>שם הלקוח</label><input id="olName"></div>
-        <div class="field"><label>טלפון</label><input id="olPhone"></div>
+        <div class="field"><label>שם בעל כרטיס אשראי</label><input id="olCardHolder" placeholder="כפי שמופיע על הכרטיס"></div>
+        <div class="field"><label>שם המזמין</label><input id="olName" placeholder="שם מלא"></div>
       </div>
-      <div class="field"><label>כתובת למשלוח</label><input id="olAddr"></div>
-      <div class="field"><label>מוביל</label>
-        <select id="olCourier"><option>דואר שליחים</option><option>צ'יטה</option><option>איסוף עצמי</option></select></div>
       <h4>פריטים</h4>
       <div id="olLines"></div>
       <div class="actions"><button class="btn btn--line btn--tiny" id="olAdd">+ הוסף פריט</button></div>
+      <div class="receipt" style="max-width:none;margin-top:14px">
+        <div class="ln total"><span>סה"כ מחיר לתשלום</span><span id="olTotal">₪0</span></div>
+      </div>
       <div class="actions" style="margin-top:14px">
-        <button class="btn btn--ok" id="olCreatePay">סיום הזמנה ותשלום</button>
+        <button class="btn btn--ok" id="olPay">מעבר לתשלום ›</button>
       </div>
       <template id="olRowTpl">
-        <div class="grid2 olrow" style="align-items:end">
-          <div class="field"><label>פריט</label><select class="olSku">${opts}</select></div>
+        <div class="grid3 olrow" style="align-items:end">
+          <div class="field" style="grid-column:span 2"><label>פריט</label><select class="olSku">${opts}</select></div>
           <div class="field"><label>כמות</label><input type="number" class="olQty" value="1" min="1"></div>
         </div>
       </template>
     `);
-    const addRow = () => { const t = $('#olRowTpl').content.cloneNode(true); $('#olLines').appendChild(t); };
+    const recompute = () => {
+      const total = $$('#olLines .olrow').reduce((s, r) => s + itemPrice($('.olSku', r).value) * (+$('.olQty', r).value || 0), 0);
+      $('#olTotal').textContent = nis(total);
+      return total;
+    };
+    const addRow = () => { $('#olLines').appendChild($('#olRowTpl').content.cloneNode(true)); recompute(); };
     addRow();
     $('#olAdd').addEventListener('click', addRow);
+    $('#olLines').addEventListener('input', recompute);
+    $('#olLines').addEventListener('change', recompute);
 
-    const collect = () => {
+    $('#olPay').addEventListener('click', () => {
       const lines = $$('#olLines .olrow').map(r => ({ sku: $('.olSku', r).value, qty: +$('.olQty', r).value || 0 })).filter(l => l.qty > 0);
-      const name = $('#olName').value.trim() || 'לקוח אנונימי';
-      if (!lines.length) { toast('הוסף לפחות פריט אחד'); return null; }
-      return DB.createOrder({ customer: name, phone: $('#olPhone').value.trim(), address: $('#olAddr').value.trim() || '-', courier: $('#olCourier').value, lines });
-    };
-    $('#olCreatePay').addEventListener('click', () => {
-      const o = collect(); if (!o) return;
-      try { DB.approvePayment(o.id, 'ויזה'); toast('הזמנה ' + o.id + ' נוצרה והתשלום אושר'); closeModal(); }
-      catch (e) { toast(e.message); }
+      if (!lines.length) { toast('הוסף לפחות פריט אחד'); return; }
+      const name = $('#olName').value.trim() || 'לקוח';
+      const holder = $('#olCardHolder').value.trim() || name;
+      const total = recompute();
+      const o = DB.createOrder({ customer: name, cardHolder: holder, lines });
+      toast('הזמנה ' + o.id + ' נקלטה · מעבר לתשלום ' + nis(total));
+      window.open(SUMIT_PAY_URL, '_blank');
+      closeModal();
     });
   }
 

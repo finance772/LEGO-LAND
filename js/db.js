@@ -227,10 +227,11 @@
       .sort((a, b) => new Date(a.paymentApprovedAt || a.createdAt) - new Date(b.paymentApprovedAt || b.createdAt));
   }
 
-  function createOrder({ customer, address, phone, courier, lines }) {
+  function createOrder({ customer, address, phone, courier, lines, cardHolder }) {
     const db = load();
     const o = {
-      id: 'ORD-' + db.counters.order++, createdAt: nowISO(), customer, address, phone,
+      id: 'ORD-' + db.counters.order++, createdAt: nowISO(), customer,
+      cardHolder: cardHolder || customer, address: address || '-', phone: phone || '',
       courier: courier || 'דואר שליחים', tracking: null,
       lines: lines.map(l => ({ sku: l.sku, qty: +l.qty, price: priceOf(l.sku) })),
       status: 'new', paymentApprovedAt: null, creditTxn: null, receiptNo: null,
