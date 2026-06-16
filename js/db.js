@@ -9,7 +9,7 @@
   const KEY = 'legoland.db.v1';
   // Bump SEED_VERSION whenever the demo dataset changes so returning
   // visitors automatically get the refreshed demo instead of stale data.
-  const SEED_VERSION = 4;
+  const SEED_VERSION = 5;
 
   // ---- status model -------------------------------------------------
   const STATUS = {
@@ -51,7 +51,7 @@
     ];
 
     const db = {
-      user: { name: 'דוד' },
+      user: { name: 'דויד' },
       items,
       movements: [],
       orders: [],
