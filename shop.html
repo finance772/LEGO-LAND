@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#d01012" />
+  <meta name="description" content="LEGO-LAND - חנות הלגו: ערכות מקוריות, משלוח עד הבית ותשלום מאובטח" />
+  <title>LEGO-LAND · חנות הלגו</title>
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="stylesheet" href="css/shop.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__brand">
+      <span class="brick b-y"></span><span class="brick b-w"></span><span class="brick b-b"></span>
+      LEGO-LAND
+    </div>
+    <button class="cartbtn" id="openCart">🛒 הסל <span class="cnt" id="cartCount">0</span></button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__bricks"></div>
+    <div class="hero__in">
+      <h1>חנות הלגו של LEGO-LAND 🧱</h1>
+      <p>ערכות לגו מקוריות לכל גיל - מהקלאסיקות ועד הדגמים החדשים. הזמנה פשוטה, משלוח מהיר עד הבית, ותשלום מאובטח.</p>
+      <div class="hero__cta">
+        <button class="btn" id="heroProducts">לכל הערכות ↓</button>
+        <button class="btn btn--ghost" id="heroShop">🛒 פתח סל הזמנה</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Promo strip -->
+  <section class="promos">
+    <div class="promo promo--g"><span class="ico">🚚</span><span>משלוח עד הבית · חינם מעל ₪299</span></div>
+    <div class="promo promo--b"><span class="ico">🔒</span><span>תשלום מאובטח בכרטיס אשראי</span></div>
+    <div class="promo promo--y"><span class="ico">⚡</span><span>אריזה ומשלוח תוך 24 שעות</span></div>
+    <div class="promo promo--r"><span class="ico">🎁</span><span>ערכות מקוריות 100% LEGO®</span></div>
+  </section>
+
+  <!-- Catalog -->
+  <section class="section" id="catalog">
+    <div class="section__head">
+      <h2>הערכות שלנו</h2>
+      <span class="muted">בחרו, הוסיפו לסל ושלמו</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- Cart drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer__bg" data-close-drawer></div>
+    <aside class="drawer__panel" role="dialog" aria-modal="true">
+      <div class="drawer__head">
+        <h3>🛒 ההזמנה שלי</h3>
+        <button class="x" data-close-drawer aria-label="סגירה">✕</button>
+      </div>
+      <div class="drawer__body" id="cartBody"></div>
+      <div class="drawer__foot">
+        <div class="totline"><span>סה"כ לתשלום</span><span id="cartTotal">₪0</span></div>
+        <div class="field"><label>שם בעל כרטיס אשראי</label><input id="ckHolder" placeholder="כפי שמופיע על הכרטיס"></div>
+        <div class="field"><label>שם המזמין</label><input id="ckName" placeholder="שם מלא"></div>
+        <button class="btn--pay" id="payBtn" disabled>מעבר לתשלום מאובטח ›</button>
+        <div class="secure">🔒 התשלום מבוצע בעמוד סליקה מאובטח</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    LEGO-LAND · חנות הלגו · כל ההזמנות נכנסות אוטומטית למרכז הלוגיסטי לאריזה ומשלוח 🧱<br>
+    LEGO® הוא סימן מסחרי של קבוצת LEGO. אתר הדגמה.
+  </footer>
+
+  <script src="js/db.js"></script>
+  <script src="js/shop.js"></script>
+</body>
+</html>
