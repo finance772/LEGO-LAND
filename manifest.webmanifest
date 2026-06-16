@@ -1,0 +1,24 @@
+{
+  "name": "LEGO-LAND · ניהול מכירות",
+  "short_name": "LEGO-LAND",
+  "description": "מערכת ניהול מכירות לגו: מלאי, חיוב וקבלות, אריזה, משלוח ודוחות גביה",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6fb",
+  "theme_color": "#d01012",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "מצב הזמנות", "url": "./index.html#orders" },
+    { "name": "עדכון מלאי", "url": "./index.html#inventory" },
+    { "name": "דוחות", "url": "./index.html#reports" }
+  ]
+}
