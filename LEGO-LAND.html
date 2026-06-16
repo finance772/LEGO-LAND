@@ -69,6 +69,28 @@ button{font-family:inherit;cursor:pointer}
 .kpi .v{font-size:1.6rem;font-weight:800;margin-top:4px}
 .kpi--a{border-color:var(--red)}.kpi--b{border-color:var(--green)}.kpi--c{border-color:var(--yellow)}.kpi--d{border-color:var(--blue)}
 
+/* recent series showcase */
+.showcase{margin:6px 16px 4px}
+.showcase__head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.showcase__head h3{font-size:1.1rem}
+.showcase__row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.showcase__row::-webkit-scrollbar{height:7px}
+.showcase__row::-webkit-scrollbar-thumb{background:#cfdaea;border-radius:9px}
+.scard{flex:0 0 168px;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;scroll-snap-align:start;border:1px solid var(--line)}
+.scard__img{height:120px;position:relative;display:grid;place-items:center;background:linear-gradient(135deg,#0a6fd6,#7b3ff2);overflow:hidden}
+.scard__img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scard__img .scard__ph{font-size:2.4rem;color:#fff;opacity:0}
+.scard__img.noimg .scard__ph{opacity:.85}
+.scard__b{padding:9px 11px}
+.scard__b b{display:block;font-size:.86rem;line-height:1.25;height:2.5em;overflow:hidden}
+.scard__b span{font-size:.78rem;color:var(--muted)}
+
+/* stock thumbnail */
+.thumb{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:8px;overflow:hidden;vertical-align:middle;
+  background:linear-gradient(135deg,#0a6fd6,#7b3ff2);position:relative;margin-inline-end:6px}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb i{font-style:normal;color:#fff;font-size:.95rem}
+
 /* tiles nav */
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:6px 16px 16px}
 .tile{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:start;
@@ -208,6 +230,9 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
 
   <!-- KPI strip -->
   <section class="kpis" id="kpis"></section>
+
+  <!-- Recent LEGO series showcase -->
+  <section class="showcase" id="showcase"></section>
 
   <!-- Main navigation buttons -->
   <nav class="tiles" id="mainNav" aria-label="ניווט ראשי">
@@ -877,6 +902,8 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     return { txt, cls };
   }
   const chip = (st) => `<span class="chip chip--${S[st].chip}">${S[st].label}</span>`;
+  // real LEGO set photo (Brickset) from the SKU; falls back to art on error
+  const imgFor = (sku) => /^LG-\d+$/.test(sku) ? 'https://images.brickset.com/sets/images/' + sku.slice(3) + '-1.jpg' : '';
   const itemName = (sku) => (DB.items().find(i => i.sku === sku) || {}).name || sku;
   const linesText = (o) => o.lines.map(l => `${itemName(l.sku)}×${l.qty}`).join('، ');
   const orderTotal = (o) => o.lines.reduce((s, l) => s + (l.price != null ? l.price : (DB.items().find(i => i.sku === l.sku) || {}).price || 0) * l.qty, 0);
@@ -980,7 +1007,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     const rows = DB.items().sort((a, b) => a.qty - b.qty).map((it) => {
       const lowCls = it.qty <= low ? 'chip chip--low' : 'chip chip--ok';
       return `<tr>
-        <td>${it.name}</td>
+        <td><span class="thumb"><img src="${imgFor(it.sku)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"><i>🧱</i></span> ${it.name}</td>
         <td class="num">${it.sku}</td>
         <td>${it.barcode || '-'}</td>
         <td><span class="${lowCls}">${it.qty}</span></td>
@@ -991,9 +1018,27 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     $('#stockUpdated').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL');
   }
 
+  // showcase of recent LEGO series (photos) on the home dashboard
+  function renderShowcase() {
+    const el = $('#showcase'); if (!el) return;
+    const picks = ['LG-10294', 'LG-71043', 'LG-75313', 'LG-42143', 'LG-42115', 'LG-10311', 'LG-21318', 'LG-10497']
+      .map(s => DB.items().find(i => i.sku === s)).filter(Boolean);
+    el.innerHTML = `
+      <div class="showcase__head"><h3>🧱 סדרות אחרונות במלאי</h3><span class="muted">גלילה →</span></div>
+      <div class="showcase__row">
+        ${picks.map(it => `<div class="scard">
+          <div class="scard__img">
+            <img src="${imgFor(it.sku)}" alt="${it.name}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('noimg')">
+            <span class="scard__ph">🧱</span>
+          </div>
+          <div class="scard__b"><b>${it.name}</b><span>${nis(it.price)} · במלאי ${it.qty}</span></div>
+        </div>`).join('')}
+      </div>`;
+  }
+
   function renderHome() {
     $('#greetUser').textContent = DB.user().name;
-    renderKPIs(); renderLiveOrders(); renderLiveStock();
+    renderKPIs(); renderShowcase(); renderLiveOrders(); renderLiveStock();
   }
 
   // tick: update only elapsed counters + clock every second (cheap)

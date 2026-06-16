@@ -24,6 +24,8 @@
 
   // catalog: hide the internal payment-test item from customers
   const products = () => DB.items().filter(i => i.sku !== 'TEST-1');
+  // real LEGO set photo (Brickset) derived from the SKU; falls back to art on error
+  const imgFor = (sku) => /^LG-\d+$/.test(sku) ? 'https://images.brickset.com/sets/images/' + sku.slice(3) + '-1.jpg' : '';
   const visual = (sku) => { const i = Math.max(0, products().findIndex(p => p.sku === sku)); return { c: COLORS[i % COLORS.length], ico: ICONS[i % ICONS.length] }; };
 
   let filter = 'all';
@@ -64,6 +66,7 @@
         <div class="card__img" style="background:linear-gradient(140deg,${v.c},${shade(v.c)})">
           <div class="glow"></div><div class="studs"></div>
           <span class="emoji">${v.ico}</span>
+          ${imgFor(it.sku) ? `<img class="photo" src="${imgFor(it.sku)}" alt="${it.name}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
           <span class="sku">${it.sku}</span>${tag}
         </div>
         <div class="card__body">
