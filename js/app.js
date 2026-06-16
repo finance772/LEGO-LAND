@@ -655,7 +655,9 @@
       const total = recompute();
       const o = DB.createOrder({ customer: name, cardHolder: holder, lines });
       toast('הזמנה ' + o.id + ' נקלטה · מעבר לתשלום ' + nis(total));
-      window.open(buildPaymentUrl(total, holder, o.id), '_blank');
+      const url = buildPaymentUrl(total, holder, o.id);
+      const w = window.open(url, '_blank');
+      if (!w) window.location.href = url;   // fallback if popup blocked
       closeModal();
     });
   }

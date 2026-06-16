@@ -111,11 +111,11 @@
     const holder = $('#ckHolder').value.trim() || name;
     const total = cartTotal();
     const o = DB.createOrder({ customer: name, cardHolder: holder, lines });
-    toast('הזמנה ' + o.id + ' נקלטה · מעבר לתשלום ' + nis(total));
-    window.open(buildPaymentUrl(total, holder, o.id), '_blank');
-    // reset cart
-    Object.keys(cart).forEach(k => delete cart[k]);
-    syncCartUI(); closeDrawer(); renderGrid();
+    const url = buildPaymentUrl(total, holder, o.id);
+    toast('מעביר לתשלום מאובטח · ' + nis(total));
+    // Navigate to the secure payment page to enter card details and pay.
+    // (same-tab redirect is reliable; new-tab popups are often blocked)
+    setTimeout(() => { window.location.href = url; }, 350);
   }
 
   // ---- events -------------------------------------------------------
