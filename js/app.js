@@ -316,18 +316,37 @@
   function viewPacking() {
     const emps = DB.employees();
     const active = DB.currentShift();
-    const current = packing._emp || DB.onShiftEmployee() || emps[0];
+    const present = DB.presentEmployees();
+    // active packer must be someone currently on shift
+    if (packing._emp && !present.some(e => e.empNo === packing._emp.empNo)) packing._emp = null;
+    const current = packing._emp || present[0] || null;
+    packing._emp = current;
     const queue = DB.orders().filter(o => o.status === 'approved' || o.status === 'packing');
 
     const shiftCards = DB.shifts().map(s => {
       const on = active && active.id === s.id;
       const team = DB.shiftRoster(s.id);
+      const here = team.filter(e => e.present).length;
       return `<div class="kpi ${on ? 'kpi--b' : ''}" data-shift="${s.id}" style="cursor:pointer;border-inline-start-color:${on ? 'var(--green)' : 'var(--line)'}">
         <h4>${s.name} ${on ? '· <span style="color:var(--green)">פעילה כעת</span>' : ''}</h4>
-        <div class="v" style="font-size:1.05rem">${team.length} עובדים</div>
+        <div class="v" style="font-size:1.05rem">${here}/${team.length} במשמרת</div>
         <div class="muted">${s.from}-${s.to}</div>
         <div class="muted" style="font-size:.74rem;margin-top:4px">${team.map(e => e.name).join(', ') || '-'} · לחץ לפירוט ›</div></div>`;
     }).join('');
+
+    const empRows = emps.map(e => {
+      const sh = (DB.shifts().find(s => s.id === e.shift) || {}).name || '-';
+      const isActive = current && current.empNo === e.empNo;
+      return `<tr class="${e.present ? 'matchok' : ''}">
+        <td><b>${e.name}</b></td>
+        <td class="num">${e.empNo}</td>
+        <td>${sh}</td>
+        <td>${e.present ? '<span class="chip chip--ok">✓ במשמרת</span>' : '<span class="chip chip--new">מחוץ למשמרת</span>'}</td>
+        <td><button class="btn btn--tiny ${e.present ? 'btn--bad' : 'btn--ok'}" data-present="${e.empNo}">${e.present ? 'יציאה' : 'כניסה'}</button></td>
+        <td>${e.present ? `<button class="btn btn--tiny ${isActive ? '' : 'btn--line'}" data-setactive="${e.empNo}">${isActive ? '✓ אורז פעיל' : 'בחר כאורז'}</button>` : '-'}</td>
+      </tr>`;
+    }).join('');
+
     const rows = queue.map((o) => {
       const e = elapsed(o.paymentApprovedAt);
       return `<tr>
@@ -339,38 +358,45 @@
       </tr>`;
     }).join('') || `<tr><td colspan="6" class="empty">אין הזמנות לאריזה</td></tr>`;
 
-    const opts = emps.map(e => `<option value="${e.empNo}" ${current && e.empNo === current.empNo ? 'selected' : ''}>${e.empNo} · ${e.name}${e.shift ? ' (' + (DB.shifts().find(s=>s.id===e.shift)||{}).name + ')' : ''}</option>`).join('');
-    const shiftOpts = DB.shifts().map(s => `<option value="${s.id}" ${active && active.id === s.id ? 'selected' : ''}>${s.name} (${s.from}-${s.to})</option>`).join('');
-
     openModal('אריזה - משמרת', `
       <h4>לוח משמרות</h4>
       <div class="kpis" style="padding:0 0 12px">${shiftCards}</div>
-      ${!active ? '<div class="hint">כרגע מחוץ לשעות המשמרת (08:00-18:00). אפשר עדיין לבחור אורז ידנית.</div>' : ''}
-      <div class="grid3">
-        <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-201"></div>
-        <div class="field"><label>שם עובד</label><input id="pkEmpName" placeholder="שם מלא"></div>
-        <div class="field"><label>משמרת</label><select id="pkShiftSel">${shiftOpts}</select></div>
-      </div>
-      <div class="field"><label>או בחר עובד פעיל</label><select id="pkEmpSel">${opts}</select></div>
-      <div class="actions"><button class="btn" id="pkShift">כניסה למשמרת</button>
-        <span class="muted" id="pkActive">${current ? `אורז פעיל: ${current.empNo} · ${current.name} · מתחילת המשמרת ${elapsed(current.shiftStart).txt}` : 'לא נבחר אורז'}</span></div>
+      <div class="hint">בחר/י מרשימת העובדים מי <b>כרגע במשמרת</b> (כניסה/יציאה), וסמן/י מי האורז הפעיל. מספר העובד מודפס על מדבקת המשלוח.</div>
+      <h4>מי במשמרת כעת</h4>
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>שם</th><th>מס' עובד</th><th>משמרת</th><th>סטטוס</th><th>נוכחות</th><th>אורז פעיל</th></tr></thead>
+        <tbody>${empRows}</tbody></table></div>
+      <div class="actions"><span class="muted" id="pkActive">${current ? `אורז פעיל: ${current.empNo} · ${current.name}` : 'לא נבחר אורז פעיל - סמן/י עובד שנמצא במשמרת'}</span></div>
+      <details style="margin:10px 0"><summary style="cursor:pointer;font-weight:700;color:var(--blue)">+ הוספת עובד חדש</summary>
+        <div class="grid3" style="margin-top:10px">
+          <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-207"></div>
+          <div class="field"><label>שם עובד</label><input id="pkEmpName" placeholder="שם מלא"></div>
+          <div class="field"><label>משמרת</label><select id="pkShiftSel">${DB.shifts().map(s => `<option value="${s.id}">${s.name} (${s.from}-${s.to})</option>`).join('')}</select></div>
+        </div>
+        <div class="actions"><button class="btn" id="pkShift">הוסף והכנס למשמרת</button></div>
+      </details>
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
-      <div class="hint">בעת אריזה מודפסת מדבקה הנושאת את <b>קוד האורז</b> (לטיפול בתלונות), מספר הזמנה, וזמן מאז אישור התשלום.</div>
+      <div class="hint">בעת אריזה מודפסת מדבקה עם <b>מספר העובד</b> וברקוד שספרותיו האחרונות (3) הן מספר העובד - לזיהוי בבירורי לקוחות.</div>
       <div class="table-wrap"><table class="tbl"><thead><tr>
         <th>הזמנה</th><th>לקוח</th><th>פריטים</th><th>סטטוס</th><th>זמן מאישור</th><th>פעולה</th></tr></thead>
         <tbody>${rows}</tbody></table></div>
     `);
 
-    $('#pkEmpSel').addEventListener('change', (e) => {
-      const emp = DB.employees().find(x => x.empNo === e.target.value);
-      packing._emp = emp; viewPacking();
-    });
-    $('#pkShift').addEventListener('click', () => {
-      const no = $('#pkEmpNo').value.trim(), nm = $('#pkEmpName').value.trim();
-      const sh = $('#pkShiftSel').value;
+    $$('#modalBody [data-present]').forEach(b => b.addEventListener('click', () => {
+      const e = DB.employees().find(x => x.empNo === b.dataset.present);
+      DB.setPresent(e.empNo, !e.present);
+      toast(`${e.name} ${!e.present ? 'נכנס/ה למשמרת' : 'יצא/ה מהמשמרת'}`); viewPacking();
+    }));
+    $$('#modalBody [data-setactive]').forEach(b => b.addEventListener('click', () => {
+      packing._emp = DB.employees().find(x => x.empNo === b.dataset.setactive);
+      toast(`${packing._emp.name} נבחר/ה כאורז פעיל`); viewPacking();
+    }));
+    const addBtn = $('#pkShift');
+    if (addBtn) addBtn.addEventListener('click', () => {
+      const no = $('#pkEmpNo').value.trim(), nm = $('#pkEmpName').value.trim(), sh = $('#pkShiftSel').value;
       if (!no) { toast('הזן מספר עובד'); return; }
-      packing._emp = DB.startShift(no, nm, sh);
-      toast(`${packing._emp.name} נכנס/ה ל${(DB.shifts().find(s=>s.id===sh)||{}).name || 'משמרת'}`); viewPacking();
+      const e = DB.startShift(no, nm, sh); DB.setPresent(e.empNo, true);
+      packing._emp = e; toast(`${e.name} נוסף/ה ונכנס/ה למשמרת`); viewPacking();
     });
   }
   function packing() { viewPacking(); }
@@ -401,12 +427,13 @@
   }
 
   function packOrder(orderId) {
-    const emp = packing._emp || DB.onShiftEmployee() || DB.employees()[0];
-    if (!emp) { toast('בחר אורז למשמרת'); return; }
+    const emp = packing._emp || DB.presentEmployees()[0] || DB.onShiftEmployee() || DB.employees()[0];
+    if (!emp) { toast('סמן/י עובד שנמצא במשמרת ובחר/י אורז פעיל'); return; }
     const shiftName = emp.shift ? (DB.shifts().find(s => s.id === emp.shift) || {}).name : '';
     DB.setStatus(orderId, 'packing', { packedBy: emp });
     const o = DB.setStatus(orderId, 'packed', { packedBy: emp });
-    const code = `${emp.empNo}-${o.id.replace('ORD-', '')}`;
+    const emp3 = ((emp.empNo.match(/\d+/) || ['0'])[0]).padStart(3, '0').slice(-3);
+    const barcode = o.id.replace(/\D/g, '') + emp3;   // last 3 digits = employee number
     const e = elapsed(o.paymentApprovedAt);
     openModal('מדבקת אריזה', `
       <div class="sticker">
@@ -414,12 +441,12 @@
         <div class="row"><span>הזמנה</span><b>${o.id}</b></div>
         <div class="row"><span>לקוח</span><b>${o.customer}</b></div>
         <div class="row"><span>פריטים</span><b>${linesText(o)}</b></div>
-        <div class="row"><span>קוד אורז</span><b>${code}</b></div>
-        <div class="row"><span>אורז</span><b>${emp.empNo} · ${emp.name}</b></div>
+        <div class="row"><span>מספר עובד (אורז)</span><b>${emp.empNo} · ${emp.name}</b></div>
         ${shiftName ? `<div class="row"><span>משמרת</span><b>${shiftName}</b></div>` : ''}
         <div class="row"><span>זמן מאישור תשלום</span><b>${e.txt}</b></div>
         <div class="row"><span>נארז ב־</span><b>${dt(o.packedAt)}</b></div>
-        <div class="bc">*${code}*</div>
+        <div class="bc">*${barcode}*</div>
+        <div class="row" style="border:none;font-size:.74rem;color:#555"><span>3 ספרות אחרונות בברקוד</span><b>מספר העובד (${emp3})</b></div>
         <div class="row" style="border:none"><span>כתובת</span><b>${o.address}</b></div>
       </div>
       <div class="actions" style="margin-top:14px">

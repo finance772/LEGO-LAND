@@ -9,7 +9,7 @@
   const KEY = 'legoland.db.v1';
   // Bump SEED_VERSION whenever the demo dataset changes so returning
   // visitors automatically get the refreshed demo instead of stale data.
-  const SEED_VERSION = 6;
+  const SEED_VERSION = 7;
 
   // ---- status model -------------------------------------------------
   const STATUS = {
@@ -61,12 +61,12 @@
         { id: 'afternoon', name: 'משמרת צהריים', from: '14:00', to: '18:00' },
       ],
       employees: [
-        { empNo: 'A-201', name: 'ורה',   shift: 'morning',   shiftStart: ago(180) },
-        { empNo: 'A-203', name: 'אורי',  shift: 'morning',   shiftStart: ago(168) },
-        { empNo: 'A-205', name: 'נועה',  shift: 'morning',   shiftStart: ago(120) },
-        { empNo: 'A-202', name: 'מירי',  shift: 'afternoon', shiftStart: ago(95) },
-        { empNo: 'A-204', name: 'טל',    shift: 'afternoon', shiftStart: ago(82) },
-        { empNo: 'A-206', name: 'רון',   shift: 'afternoon', shiftStart: ago(40) },
+        { empNo: 'A-201', name: 'ורה',   shift: 'morning',   present: true,  shiftStart: ago(180) },
+        { empNo: 'A-203', name: 'אורי',  shift: 'morning',   present: true,  shiftStart: ago(168) },
+        { empNo: 'A-205', name: 'נועה',  shift: 'morning',   present: false, shiftStart: ago(120) },
+        { empNo: 'A-202', name: 'מירי',  shift: 'afternoon', present: false, shiftStart: ago(95) },
+        { empNo: 'A-204', name: 'טל',    shift: 'afternoon', present: false, shiftStart: ago(82) },
+        { empNo: 'A-206', name: 'רון',   shift: 'afternoon', present: false, shiftStart: ago(40) },
       ],
       creditReport: [],          // uploaded from the credit-card company
       counters: { order: 1000, receipt: 5000, movement: 1, txn: 70000 },
@@ -310,6 +310,16 @@
   // all employees assigned to a given shift
   function shiftRoster(shiftId) { return load().employees.filter(e => e.shift === shiftId); }
 
+  // who is currently clocked-in (present in the shift)
+  function presentEmployees() { return load().employees.filter(e => e.present); }
+  function setPresent(empNo, val) {
+    const db = load();
+    const e = db.employees.find(x => x.empNo === empNo);
+    if (e) { e.present = !!val; if (val) e.shiftStart = nowISO(); }
+    save();
+    return e;
+  }
+
   // which shift covers a given time (default: now). null if outside hours.
   function currentShift(at) {
     const d = at ? new Date(at) : new Date();
@@ -410,7 +420,7 @@
     STATUS, on, save, reset, load,
     items, reserved, applyInventoryList, movements,
     orders, ordersInProcess, createOrder, approvePayment, setStatus, setCourier, receiptFor,
-    employees, startShift, shifts, shiftRoster, currentShift, onShiftEmployee,
+    employees, startShift, shifts, shiftRoster, currentShift, onShiftEmployee, presentEmployees, setPresent,
     inventoryReport, creditCollectionReport, uploadCreditSettlement,
     user: () => load().user,
     settings: () => load().settings,
