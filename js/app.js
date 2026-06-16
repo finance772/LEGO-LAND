@@ -42,6 +42,8 @@
     return { txt, cls };
   }
   const chip = (st) => `<span class="chip chip--${S[st].chip}">${S[st].label}</span>`;
+  // real LEGO set photo (Brickset) from the SKU; falls back to art on error
+  const imgFor = (sku) => /^LG-\d+$/.test(sku) ? 'https://images.brickset.com/sets/images/' + sku.slice(3) + '-1.jpg' : '';
   const itemName = (sku) => (DB.items().find(i => i.sku === sku) || {}).name || sku;
   const linesText = (o) => o.lines.map(l => `${itemName(l.sku)}×${l.qty}`).join('، ');
   const orderTotal = (o) => o.lines.reduce((s, l) => s + (l.price != null ? l.price : (DB.items().find(i => i.sku === l.sku) || {}).price || 0) * l.qty, 0);
@@ -145,7 +147,7 @@
     const rows = DB.items().sort((a, b) => a.qty - b.qty).map((it) => {
       const lowCls = it.qty <= low ? 'chip chip--low' : 'chip chip--ok';
       return `<tr>
-        <td>${it.name}</td>
+        <td><span class="thumb"><img src="${imgFor(it.sku)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"><i>🧱</i></span> ${it.name}</td>
         <td class="num">${it.sku}</td>
         <td>${it.barcode || '-'}</td>
         <td><span class="${lowCls}">${it.qty}</span></td>
@@ -156,9 +158,27 @@
     $('#stockUpdated').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL');
   }
 
+  // showcase of recent LEGO series (photos) on the home dashboard
+  function renderShowcase() {
+    const el = $('#showcase'); if (!el) return;
+    const picks = ['LG-10294', 'LG-71043', 'LG-75313', 'LG-42143', 'LG-42115', 'LG-10311', 'LG-21318', 'LG-10497']
+      .map(s => DB.items().find(i => i.sku === s)).filter(Boolean);
+    el.innerHTML = `
+      <div class="showcase__head"><h3>🧱 סדרות אחרונות במלאי</h3><span class="muted">גלילה →</span></div>
+      <div class="showcase__row">
+        ${picks.map(it => `<div class="scard">
+          <div class="scard__img">
+            <img src="${imgFor(it.sku)}" alt="${it.name}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('noimg')">
+            <span class="scard__ph">🧱</span>
+          </div>
+          <div class="scard__b"><b>${it.name}</b><span>${nis(it.price)} · במלאי ${it.qty}</span></div>
+        </div>`).join('')}
+      </div>`;
+  }
+
   function renderHome() {
     $('#greetUser').textContent = DB.user().name;
-    renderKPIs(); renderLiveOrders(); renderLiveStock();
+    renderKPIs(); renderShowcase(); renderLiveOrders(); renderLiveStock();
   }
 
   // tick: update only elapsed counters + clock every second (cheap)
