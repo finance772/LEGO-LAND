@@ -284,6 +284,9 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
   'use strict';
 
   const KEY = 'legoland.db.v1';
+  // Bump SEED_VERSION whenever the demo dataset changes so returning
+  // visitors automatically get the refreshed demo instead of stale data.
+  const SEED_VERSION = 2;
 
   // ---- status model -------------------------------------------------
   const STATUS = {
@@ -344,6 +347,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       counters: { order: 1000, receipt: 5000, movement: 1, txn: 70000 },
       settings: { lowStock: 5 },
       _seededAt: nowISO(),
+      _seedVersion: SEED_VERSION,
     };
 
     // opening inventory movements
@@ -436,7 +440,9 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     if (_cache) return _cache;
     try {
       const raw = safeGet(KEY);
-      _cache = raw ? JSON.parse(raw) : seed();
+      const parsed = raw ? JSON.parse(raw) : null;
+      // re-seed if missing or from an older demo dataset version
+      _cache = (parsed && parsed._seedVersion === SEED_VERSION) ? parsed : seed();
     } catch (e) { _cache = seed(); }
     save();
     return _cache;
