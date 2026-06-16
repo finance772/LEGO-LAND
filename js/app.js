@@ -632,7 +632,11 @@
       const total = recompute();
       const o = DB.createOrder({ customer: name, cardHolder: holder, lines });
       toast('הזמנה ' + o.id + ' נקלטה · מעבר לתשלום ' + nis(total));
-      window.open(SUMIT_PAY_URL, '_blank');
+      // carry the order amount + details to the checkout page
+      const url = SUMIT_PAY_URL + (SUMIT_PAY_URL.includes('?') ? '&' : '?') +
+        'amount=' + total + '&Amount=' + total + '&sum=' + total +
+        '&name=' + encodeURIComponent(holder) + '&order=' + encodeURIComponent(o.id);
+      window.open(url, '_blank');
       closeModal();
     });
   }
