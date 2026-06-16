@@ -284,6 +284,13 @@
     return o;
   }
 
+  function setCourier(orderId, courier) {
+    const db = load();
+    const o = db.orders.find(x => x.id === orderId);
+    if (o) { o.courier = courier; save(); }
+    return o;
+  }
+
   function receiptFor(orderId) {
     const o = load().orders.find(x => x.id === orderId);
     if (!o) return null;
@@ -401,7 +408,7 @@
   global.DB = {
     STATUS, on, save, reset, load,
     items, reserved, applyInventoryList, movements,
-    orders, ordersInProcess, createOrder, approvePayment, setStatus, receiptFor,
+    orders, ordersInProcess, createOrder, approvePayment, setStatus, setCourier, receiptFor,
     employees, startShift, shifts, shiftRoster, currentShift, onShiftEmployee,
     inventoryReport, creditCollectionReport, uploadCreditSettlement,
     user: () => load().user,

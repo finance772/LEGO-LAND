@@ -561,6 +561,13 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     return o;
   }
 
+  function setCourier(orderId, courier) {
+    const db = load();
+    const o = db.orders.find(x => x.id === orderId);
+    if (o) { o.courier = courier; save(); }
+    return o;
+  }
+
   function receiptFor(orderId) {
     const o = load().orders.find(x => x.id === orderId);
     if (!o) return null;
@@ -678,7 +685,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
   global.DB = {
     STATUS, on, save, reset, load,
     items, reserved, applyInventoryList, movements,
-    orders, ordersInProcess, createOrder, approvePayment, setStatus, receiptFor,
+    orders, ordersInProcess, createOrder, approvePayment, setStatus, setCourier, receiptFor,
     employees, startShift, shifts, shiftRoster, currentShift, onShiftEmployee,
     inventoryReport, creditCollectionReport, uploadCreditSettlement,
     user: () => load().user,
@@ -834,6 +841,13 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const S  = DB.STATUS;
+
+  // Optional delivery-courier companies (order a courier per shipment)
+  const COURIERS = [
+    { id: 'gett',  name: 'Gett',       url: 'https://www.gett.com/il/business/delivery/' },
+    { id: 'yango', name: 'Yango',      url: 'https://yango.com/he_il/business/delivery/' },
+    { id: 'wolt',  name: 'Wolt Drive', url: 'https://explore.wolt.com/he/isr/wolt-drive' },
+  ];
 
   // Real payment (Sumit) checkout page — dynamic-amount payment page
   const SUMIT_PAY_URL = 'https://pay.sumit.co.il/e1wv4v/xbiry4/';
@@ -1240,21 +1254,26 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       if (o.status === 'packed') act = `<button class="btn btn--tiny btn--ok" data-ship="${o.id}">שלח והפק קבלה</button>`;
       else if (o.status === 'shipping') act = `<button class="btn btn--tiny" data-next="${o.id}">→ נשלח</button>`;
       else act = `<button class="btn btn--tiny btn--line" data-next="${o.id}">→ נמסר</button>`;
+      const courierBtns = COURIERS.map(c =>
+        `<button class="btn btn--tiny ${o.courier === c.name ? 'btn--ok' : 'btn--line'}" data-courier="${o.id}" data-co="${c.id}">${c.name}</button>`).join(' ');
       return `<tr>
         <td class="num">${o.id}</td><td>${o.customer}</td>
-        <td style="white-space:normal">${o.address}<br><span class="muted">${o.phone || ''} · ${o.courier}</span></td>
+        <td style="white-space:normal">${o.address}<br><span class="muted">${o.phone || ''}</span></td>
+        <td style="white-space:normal"><div class="muted" style="margin-bottom:4px">חברת משלוחים: <b>${o.courier}</b></div>${courierBtns}</td>
         <td>${chip(o.status)}</td>
         <td>${o.tracking || '-'}</td>
         <td><span class="elapsed ${e.cls}" data-elapsed="${ref || ''}">${e.txt}</span></td>
         <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
         <td>${act}</td>
       </tr>`;
-    }).join('') || `<tr><td colspan="8" class="empty">אין משלוחים כעת</td></tr>`;
+    }).join('') || `<tr><td colspan="9" class="empty">אין משלוחים כעת</td></tr>`;
 
     openModal('משלוח - מערך הובלה', `
-      <div class="hint">ניהול מערך ההובלה למזמין: כתובת, מוביל, מספר מעקב, וזמן מאז שההזמנה מוכנה למשלוח. הפקת קבלה מתבצעת ברגע שההזמנה יוצאת ללקוח.</div>
+      <div class="hint">ניהול מערך ההובלה למזמין: כתובת, חברת משלוחים, מספר מעקב, וזמן מאז שההזמנה מוכנה. הפקת קבלה מתבצעת ברגע שההזמנה יוצאת ללקוח.<br>
+      הזמנת שליח אופציונלית מאחת מחברות המשלוחים — לחיצה פותחת את אתר ההזמנה של החברה ומשייכת אותה להזמנה. <b>על כל הזמנה מוצג שם חברת המשלוחים שמבצעת את המשלוח.</b></div>
+      <div class="hint" style="background:#fff8e6;border-color:#f0d28a;color:#7a5a12">* יש לבדוק מול חברות המשלוחים לגבי סנכרון מלא (API) או צורך בתפעול אנושי להזמנת השליח בפועל.</div>
       <div class="table-wrap"><table class="tbl"><thead><tr>
-        <th>הזמנה</th><th>לקוח</th><th>כתובת ומוביל</th><th>סטטוס</th><th>מעקב</th>
+        <th>הזמנה</th><th>לקוח</th><th>כתובת</th><th>הזמנת שליח / חברה</th><th>סטטוס</th><th>מעקב</th>
         <th>זמן מההכנה</th><th>קבלה</th><th>פעולה</th></tr></thead>
         <tbody>${rows}</tbody></table></div>
     `);
@@ -1478,6 +1497,15 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
   //  Global click delegation for dynamic action buttons
   // ============================================================
   document.body.addEventListener('click', (e) => {
+    const cr = e.target.closest('[data-courier]');
+    if (cr) {
+      const co = COURIERS.find(c => c.id === cr.dataset.co);
+      DB.setCourier(cr.dataset.courier, co.name);
+      window.open(co.url, '_blank');
+      toast('הוזמן שליח ' + co.name + ' להזמנה ' + cr.dataset.courier);
+      refreshOpenView();
+      return;
+    }
     const t = e.target.closest('[data-approve],[data-next],[data-pack],[data-ship],[data-receipt]');
     if (!t) return;
     if (t.dataset.approve) { try { DB.approvePayment(t.dataset.approve); toast('התשלום אושר · המלאי עודכן'); } catch (err) { toast(err.message); } refreshOpenView(); }
