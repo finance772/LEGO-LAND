@@ -10,10 +10,10 @@
   // ---- helpers ------------------------------------------------------
   const pad = (n) => String(n).padStart(2, '0');
   const nis = (n) => '₪' + (Math.round(n * 100) / 100).toLocaleString('he-IL');
-  const dt  = (iso) => iso ? new Date(iso).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+  const dt  = (iso) => iso ? new Date(iso).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-';
 
   function elapsed(iso) {
-    if (!iso) return { txt: '—', cls: '' };
+    if (!iso) return { txt: '-', cls: '' };
     let s = Math.max(0, Math.floor((Date.now() - new Date(iso)) / 1000));
     const h = Math.floor(s / 3600); s -= h * 3600;
     const m = Math.floor(s / 60); s -= m * 60;
@@ -67,7 +67,7 @@
         <td>${linesText(o)}</td>
         <td>${chip(o.status)}</td>
         <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${e.txt}</span></td>
-        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '—'}</td>
+        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
       </tr>`;
     }).join('');
     $('#liveOrdersTbl tbody').innerHTML = rows || `<tr><td colspan="6" class="empty">אין הזמנות פעילות כרגע</td></tr>`;
@@ -80,7 +80,7 @@
       return `<tr>
         <td>${it.name}</td>
         <td class="num">${it.sku}</td>
-        <td>${it.barcode || '—'}</td>
+        <td>${it.barcode || '-'}</td>
         <td><span class="${lowCls}">${it.qty}</span></td>
         <td class="num">${DB.reserved(it.sku)}</td>
       </tr>`;
@@ -110,11 +110,11 @@
   function viewInventory() {
     const items = DB.items();
     const tbl = items.map(it => `<tr>
-      <td>${it.name}</td><td class="num">${it.sku}</td><td>${it.barcode || '—'}</td>
+      <td>${it.name}</td><td class="num">${it.sku}</td><td>${it.barcode || '-'}</td>
       <td class="num">${nis(it.price)}</td><td class="num">${it.qty}</td></tr>`).join('');
 
     openModal('עדכון מלאי', `
-      <div class="hint">העלה רשימת פריטים למכירה — כמות לכל פריט. אפשר להדביק טקסט/CSV, או לטעון קובץ.
+      <div class="hint">העלה רשימת פריטים למכירה - כמות לכל פריט. אפשר להדביק טקסט/CSV, או לטעון קובץ.
       עמודות נתמכות: <b>sku, name, barcode, price, qty</b> (גם בעברית: מק"ט, שם, ברקוד, מחיר, כמות).
       פורמט מהיר: <code>מק"ט,כמות</code> בכל שורה.</div>
 
@@ -152,7 +152,7 @@
     $('#invFile').addEventListener('change', (e) => {
       const f = e.target.files[0]; if (!f) return;
       const r = new FileReader();
-      r.onload = () => { $('#invText').value = r.result; toast('הקובץ נטען — בדוק ולחץ "עדכן מלאי"'); };
+      r.onload = () => { $('#invText').value = r.result; toast('הקובץ נטען - בדוק ולחץ "עדכן מלאי"'); };
       r.readAsText(f, 'utf-8');
     });
 
@@ -189,7 +189,7 @@
   }
 
   // ============================================================
-  //  VIEW: ORDERS (מצב הזמנות) — live
+  //  VIEW: ORDERS (מצב הזמנות) - live
   // ============================================================
   const NEXT = { approved: 'packing', packing: 'packed', packed: 'shipping', shipping: 'shipped', shipped: 'delivered' };
   function viewOrders() {
@@ -197,7 +197,7 @@
       const e = elapsed(o.paymentApprovedAt);
       const skus = o.lines.map(l => {
         const av = (DB.items().find(i => i.sku === l.sku) || {}).qty;
-        return `${l.sku} (כ:${l.qty} · זמין:${av != null ? av : '—'})`;
+        return `${l.sku} (כ:${l.qty} · זמין:${av != null ? av : '-'})`;
       }).join('<br>');
       let act = '';
       if (o.status === 'new') act = `<button class="btn btn--tiny btn--ok" data-approve="${o.id}">אשר תשלום</button>`;
@@ -208,12 +208,12 @@
         <td style="white-space:normal">${skus}</td>
         <td>${chip(o.status)}</td>
         <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${o.paymentApprovedAt ? e.txt : 'טרם אושר'}</span></td>
-        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '—'}</td>
+        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
         <td>${act}</td>
       </tr>`;
     }).join('');
 
-    openModal('מצב הזמנות — לייב', `
+    openModal('מצב הזמנות - לייב', `
       <div class="hint">סטטוס וזמן מאישור התשלום מתעדכנים בזמן אמת. לכל פריט מוצגים מק"ט, כמות בהזמנה וכמות זמינה במלאי.</div>
       <div class="table-wrap"><table class="tbl"><thead><tr>
         <th>הזמנה</th><th>לקוח</th><th>פריטים (מק"ט · כמות · זמין)</th><th>סטטוס</th>
@@ -227,8 +227,17 @@
   // ============================================================
   function viewPacking() {
     const emps = DB.employees();
-    const current = packing._emp || emps[0];
+    const active = DB.currentShift();
+    const current = packing._emp || DB.onShiftEmployee() || emps[0];
     const queue = DB.orders().filter(o => o.status === 'approved' || o.status === 'packing');
+
+    const shiftCards = DB.shifts().map(s => {
+      const on = active && active.id === s.id;
+      return `<div class="kpi ${on ? 'kpi--b' : ''}" style="border-inline-start-color:${on ? 'var(--green)' : 'var(--line)'}">
+        <h4>${s.name} ${on ? '· <span style="color:var(--green)">פעילה כעת</span>' : ''}</h4>
+        <div class="v" style="font-size:1.05rem">${s.empName}</div>
+        <div class="muted">${s.from}-${s.to} · עובד ${s.empNo}</div></div>`;
+    }).join('');
     const rows = queue.map((o) => {
       const e = elapsed(o.paymentApprovedAt);
       return `<tr>
@@ -240,14 +249,19 @@
       </tr>`;
     }).join('') || `<tr><td colspan="6" class="empty">אין הזמנות לאריזה</td></tr>`;
 
-    const opts = emps.map(e => `<option value="${e.empNo}" ${current && e.empNo === current.empNo ? 'selected' : ''}>${e.empNo} · ${e.name}</option>`).join('');
+    const opts = emps.map(e => `<option value="${e.empNo}" ${current && e.empNo === current.empNo ? 'selected' : ''}>${e.empNo} · ${e.name}${e.shift ? ' (' + (DB.shifts().find(s=>s.id===e.shift)||{}).name + ')' : ''}</option>`).join('');
+    const shiftOpts = DB.shifts().map(s => `<option value="${s.id}" ${active && active.id === s.id ? 'selected' : ''}>${s.name} (${s.from}-${s.to})</option>`).join('');
 
-    openModal('אריזה — משמרת', `
+    openModal('אריזה - משמרת', `
+      <h4>לוח משמרות</h4>
+      <div class="kpis" style="padding:0 0 12px">${shiftCards}</div>
+      ${!active ? '<div class="hint">כרגע מחוץ לשעות המשמרת (08:00-18:00). אפשר עדיין לבחור אורז ידנית.</div>' : ''}
       <div class="grid3">
-        <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-204"></div>
+        <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-201"></div>
         <div class="field"><label>שם עובד</label><input id="pkEmpName" placeholder="שם מלא"></div>
-        <div class="field"><label>או בחר עובד פעיל</label><select id="pkEmpSel">${opts}</select></div>
+        <div class="field"><label>משמרת</label><select id="pkShiftSel">${shiftOpts}</select></div>
       </div>
+      <div class="field"><label>או בחר עובד פעיל</label><select id="pkEmpSel">${opts}</select></div>
       <div class="actions"><button class="btn" id="pkShift">כניסה למשמרת</button>
         <span class="muted" id="pkActive">${current ? `אורז פעיל: ${current.empNo} · ${current.name} · מתחילת המשמרת ${elapsed(current.shiftStart).txt}` : 'לא נבחר אורז'}</span></div>
       <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
@@ -263,16 +277,18 @@
     });
     $('#pkShift').addEventListener('click', () => {
       const no = $('#pkEmpNo').value.trim(), nm = $('#pkEmpName').value.trim();
+      const sh = $('#pkShiftSel').value;
       if (!no) { toast('הזן מספר עובד'); return; }
-      packing._emp = DB.startShift(no, nm);
-      toast(`${packing._emp.name} נכנס/ה למשמרת`); viewPacking();
+      packing._emp = DB.startShift(no, nm, sh);
+      toast(`${packing._emp.name} נכנס/ה ל${(DB.shifts().find(s=>s.id===sh)||{}).name || 'משמרת'}`); viewPacking();
     });
   }
   function packing() { viewPacking(); }
 
   function packOrder(orderId) {
-    const emp = packing._emp || DB.employees()[0];
+    const emp = packing._emp || DB.onShiftEmployee() || DB.employees()[0];
     if (!emp) { toast('בחר אורז למשמרת'); return; }
+    const shiftName = emp.shift ? (DB.shifts().find(s => s.id === emp.shift) || {}).name : '';
     DB.setStatus(orderId, 'packing', { packedBy: emp });
     const o = DB.setStatus(orderId, 'packed', { packedBy: emp });
     const code = `${emp.empNo}-${o.id.replace('ORD-', '')}`;
@@ -285,6 +301,7 @@
         <div class="row"><span>פריטים</span><b>${linesText(o)}</b></div>
         <div class="row"><span>קוד אורז</span><b>${code}</b></div>
         <div class="row"><span>אורז</span><b>${emp.empNo} · ${emp.name}</b></div>
+        ${shiftName ? `<div class="row"><span>משמרת</span><b>${shiftName}</b></div>` : ''}
         <div class="row"><span>זמן מאישור תשלום</span><b>${e.txt}</b></div>
         <div class="row"><span>נארז ב־</span><b>${dt(o.packedAt)}</b></div>
         <div class="bc">*${code}*</div>
@@ -313,14 +330,14 @@
         <td class="num">${o.id}</td><td>${o.customer}</td>
         <td style="white-space:normal">${o.address}<br><span class="muted">${o.phone || ''} · ${o.courier}</span></td>
         <td>${chip(o.status)}</td>
-        <td>${o.tracking || '—'}</td>
+        <td>${o.tracking || '-'}</td>
         <td><span class="elapsed ${e.cls}" data-elapsed="${ref || ''}">${e.txt}</span></td>
-        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '—'}</td>
+        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
         <td>${act}</td>
       </tr>`;
     }).join('') || `<tr><td colspan="8" class="empty">אין משלוחים כעת</td></tr>`;
 
-    openModal('משלוח — מערך הובלה', `
+    openModal('משלוח - מערך הובלה', `
       <div class="hint">ניהול מערך ההובלה למזמין: כתובת, מוביל, מספר מעקב, וזמן מאז שההזמנה מוכנה למשלוח. הפקת קבלה מתבצעת ברגע שההזמנה יוצאת ללקוח.</div>
       <div class="table-wrap"><table class="tbl"><thead><tr>
         <th>הזמנה</th><th>לקוח</th><th>כתובת ומוביל</th><th>סטטוס</th><th>מעקב</th>
@@ -339,7 +356,7 @@
         <div class="ln"><span>תאריך</span><span>${dt(r.date)}</span></div>
         <div class="ln"><span>הזמנה</span><span>${r.order.id}</span></div>
         <div class="ln"><span>לקוח</span><span>${r.order.customer}</span></div>
-        <div class="ln"><span>אמצעי תשלום</span><span>${r.order.creditTxn ? r.order.creditTxn.card + ' •••• ' + r.order.creditTxn.last4 : '—'}</span></div>
+        <div class="ln"><span>אמצעי תשלום</span><span>${r.order.creditTxn ? r.order.creditTxn.card + ' •••• ' + r.order.creditTxn.last4 : '-'}</span></div>
         <div style="margin:8px 0;border-top:1px dashed #bbb"></div>
         ${r.lines.map(l => `<div class="ln"><span>${l.name} ×${l.qty}</span><span>${nis(l.total)}</span></div>`).join('')}
         <div class="ln total"><span>סה"כ לתשלום</span><span>${nis(r.total)}</span></div>
@@ -371,7 +388,7 @@
     const rep = DB.inventoryReport();
     const rows = rep.map((r) => `
       <tr data-drill="${r.sku}" style="cursor:pointer">
-        <td>▸ ${r.name}</td><td class="num">${r.sku}</td><td>${r.barcode || '—'}</td>
+        <td>▸ ${r.name}</td><td class="num">${r.sku}</td><td>${r.barcode || '-'}</td>
         <td class="num">${r.balance}</td><td class="num">${r.soldUnits}</td><td class="num">${nis(r.soldAmount)}</td>
       </tr>
       <tr class="drill" id="drill-${r.sku}" hidden><td colspan="6">
@@ -410,7 +427,7 @@
     const today = new Date().toISOString().slice(0, 10);
     const monthAgo = new Date(Date.now() - 35 * 86400000).toISOString().slice(0, 10);
     $('#repBody').innerHTML = `
-      <div class="hint">דוח גביה אשראי תקופתי לפי תאריכים. לביצוע התאמה — טען את דוח הגביה שמתקבל מחברת האשראי (ברמת עסקה),
+      <div class="hint">דוח גביה אשראי תקופתי לפי תאריכים. לביצוע התאמה - טען את דוח הגביה שמתקבל מחברת האשראי (ברמת עסקה),
       והמערכת תסמן כל אי-התאמה בין דוח המכירות לדוח הגביה.<br>
       פורמט קובץ ההתאמה: עמודות <b>txnId, amount</b> (אופ' <b>date, ref</b>).</div>
       <div class="grid3">
@@ -459,12 +476,12 @@
     const reconRows = R.recon.map(r => `<tr class="${cls(r.match)}">
       <td>${r.orderId}</td><td>${r.txnId}</td><td>${dt(r.date)}</td><td>${r.customer}</td>
       <td class="num">${nis(r.amount)}</td>
-      <td class="num">${r.collected != null ? nis(r.collected) : '—'}</td>
-      <td class="num">${r.diff != null ? (r.diff === 0 ? '0' : nis(r.diff)) : '—'}</td>
+      <td class="num">${r.collected != null ? nis(r.collected) : '-'}</td>
+      <td class="num">${r.diff != null ? (r.diff === 0 ? '0' : nis(r.diff)) : '-'}</td>
       <td><span class="chip ${r.match === 'match' ? 'chip--ok' : 'chip--low'}">${lbl[r.match]}</span></td></tr>`).join('');
     const orphanRows = R.orphan.map(r => `<tr class="miss">
-      <td>—</td><td>${r.txnId}</td><td>${dt(r.date)}</td><td>—</td><td class="num">—</td>
-      <td class="num">${nis(r.collected)}</td><td class="num">—</td>
+      <td>-</td><td>${r.txnId}</td><td>${dt(r.date)}</td><td>-</td><td class="num">-</td>
+      <td class="num">${nis(r.collected)}</td><td class="num">-</td>
       <td><span class="chip chip--low">${lbl.orphan}</span></td></tr>`).join('');
 
     $('#reconOut').innerHTML = `
@@ -474,7 +491,7 @@
         <div class="kpi kpi--c"><h4>סה"כ נגבה</h4><div class="v">${nis(R.totals.collectedAmount)}</div></div>
         <div class="kpi kpi--a"><h4>אי-התאמות</h4><div class="v">${R.totals.mismatches}</div></div>
       </div>
-      ${!R.hasSettlement ? '<div class="hint">לא נטען דוח גביה מחברת האשראי — מוצג דוח המכירות בלבד. טען קובץ לביצוע התאמה.</div>' : ''}
+      ${!R.hasSettlement ? '<div class="hint">לא נטען דוח גביה מחברת האשראי - מוצג דוח המכירות בלבד. טען קובץ לביצוע התאמה.</div>' : ''}
       <div class="table-wrap"><table class="tbl"><thead><tr>
         <th>הזמנה</th><th>עסקה</th><th>תאריך</th><th>לקוח</th><th>סכום מכירה</th><th>סכום גביה</th><th>פער</th><th>התאמה</th>
         </tr></thead><tbody>${reconRows}${orphanRows || ''}</tbody></table></div>`;
@@ -495,8 +512,8 @@
   //  VIEW: ORDER LINK (לינק הזמנה)
   // ============================================================
   function viewOrderLink() {
-    const opts = DB.items().map(i => `<option value="${i.sku}">${i.name} — ${i.sku} (זמין ${i.qty})</option>`).join('');
-    openModal('לינק הזמנה — קליטת הזמנה חדשה', `
+    const opts = DB.items().map(i => `<option value="${i.sku}">${i.name} - ${i.sku} (זמין ${i.qty})</option>`).join('');
+    openModal('לינק הזמנה - קליטת הזמנה חדשה', `
       <div class="hint">קליטת הזמנה המקושרת ישירות למלאי. עם אישור התשלום הכמות נגרעת אוטומטית מהמלאי ומתחיל מד הזמן.</div>
       <div class="grid2">
         <div class="field"><label>שם הלקוח</label><input id="olName"></div>
@@ -527,7 +544,7 @@
       const lines = $$('#olLines .olrow').map(r => ({ sku: $('.olSku', r).value, qty: +$('.olQty', r).value || 0 })).filter(l => l.qty > 0);
       const name = $('#olName').value.trim() || 'לקוח אנונימי';
       if (!lines.length) { toast('הוסף לפחות פריט אחד'); return null; }
-      return DB.createOrder({ customer: name, phone: $('#olPhone').value.trim(), address: $('#olAddr').value.trim() || '—', courier: $('#olCourier').value, lines });
+      return DB.createOrder({ customer: name, phone: $('#olPhone').value.trim(), address: $('#olAddr').value.trim() || '-', courier: $('#olCourier').value, lines });
     };
     $('#olCreate').addEventListener('click', () => { const o = collect(); if (o) { toast('נוצרה הזמנה ' + o.id); closeModal(); } });
     $('#olCreatePay').addEventListener('click', () => {
@@ -590,9 +607,13 @@
   // ============================================================
   //  Boot + live loop
   // ============================================================
-  DB.on(() => { renderHome(); refreshOpenView(); });
-  renderHome();
-  tick();
-  setInterval(tick, 1000);
-  setInterval(() => { if ($('#modal').hidden) { renderLiveOrders(); renderLiveStock(); } }, 5000);
+  DB.on(() => { try { renderHome(); refreshOpenView(); } catch (e) {} });
+  try {
+    renderHome();
+    tick();
+    setInterval(tick, 1000);
+    setInterval(() => { if ($('#modal').hidden) { renderLiveOrders(); renderLiveStock(); } }, 5000);
+  } catch (e) {
+    if (window.__legoErr) window.__legoErr(e && e.message ? e.message : String(e));
+  }
 })();

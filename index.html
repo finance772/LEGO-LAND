@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#d01012" />
-  <meta name="description" content="מערכת ניהול מכירות לגו – מלאי, חיוב, אריזה, משלוח ודוחות" />
+  <meta name="description" content="מערכת ניהול מכירות לגו - מלאי, חיוב, אריזה, משלוח ודוחות" />
   <title>LEGO-LAND · ניהול מכירות</title>
 
   <!-- PWA -->
@@ -19,6 +19,20 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- Early diagnostic: surface any boot error visibly instead of a dead screen -->
+  <script>
+    window.__legoErr = function (msg) {
+      var b = document.getElementById('bootErr');
+      if (!b) {
+        b = document.createElement('div'); b.id = 'bootErr';
+        b.style.cssText = 'position:fixed;inset-inline:0;top:0;z-index:9999;background:#d01012;color:#fff;padding:10px 14px;font:14px/1.4 Arial;direction:rtl';
+        document.body.appendChild(b);
+      }
+      b.textContent = '⚠ שגיאה בטעינה: ' + msg + ' — נסה לפתוח את הקובץ בדפדפן Chrome/Safari (לא בתצוגה מקדימה).';
+    };
+    window.addEventListener('error', function (e) { window.__legoErr(e.message || e.error); });
+  </script>
+
   <!-- App bar -->
   <header class="appbar">
     <div class="appbar__brand">
@@ -36,7 +50,7 @@
   <!-- Greeting -->
   <section class="greeting" id="greeting">
     <h2 class="greeting__title"><span id="greetUser">דוד</span> שלום 👋</h2>
-    <p class="greeting__sub">ברוך הבא למרכז הבקרה של מכירות הלגו. כל השרשרת — מהזמנה ועד מסירה — במקום אחד.</p>
+    <p class="greeting__sub">ברוך הבא למרכז הבקרה של מכירות הלגו. כל השרשרת - מהזמנה ועד מסירה - במקום אחד.</p>
   </section>
 
   <!-- KPI strip -->
@@ -55,7 +69,7 @@
   <!-- Live dashboard: orders in process -->
   <section class="panel" id="livePanel">
     <div class="panel__head">
-      <h3>מצב הזמנות בתהליך — לייב</h3>
+      <h3>מצב הזמנות בתהליך - לייב</h3>
       <span class="dot dot--live">● עדכון חי</span>
     </div>
     <div class="table-wrap">

@@ -37,6 +37,13 @@
       { sku: 'LG-10497', name: 'רכבת גלקסיה',              barcode: '5702017415086', price: 599, qty: 18 },
       { sku: 'LG-21330', name: 'הבית הבודד (Home Alone)',  barcode: '5702017153131', price: 1099, qty: 7 },
       { sku: 'LG-40524', name: 'חמניות',                   barcode: '5702017183152', price: 89,  qty: 60 },
+      { sku: 'LG-71043', name: 'טירת הוגוורטס',            barcode: '5702016667071', price: 3499, qty: 3 },
+      { sku: 'LG-10307', name: 'עץ בונסאי',               barcode: '5702017152646', price: 219, qty: 22 },
+      { sku: 'LG-21034', name: 'נוף לונדון',              barcode: '5702016368031', price: 199, qty: 15 },
+      { sku: 'LG-42115', name: 'למבורגיני סיאן',          barcode: '5702016617441', price: 1399, qty: 5 },
+      { sku: 'LG-10294', name: 'טיטאניק',                 barcode: '5702016852448', price: 2599, qty: 4 },
+      { sku: 'LG-40747', name: 'נרקיסים',                 barcode: '5702017369884', price: 69,  qty: 80 },
+      { sku: 'LG-21341', name: 'הוקוס פוקוס',             barcode: '5702017153308', price: 899, qty: 8 },
     ];
 
     const db = {
@@ -44,9 +51,13 @@
       items,
       movements: [],
       orders: [],
+      shifts: [
+        { id: 'morning',   name: 'משמרת בוקר',   from: '08:00', to: '14:00', empNo: 'A-201', empName: 'ורה' },
+        { id: 'afternoon', name: 'משמרת צהריים', from: '14:00', to: '18:00', empNo: 'A-202', empName: 'מירי' },
+      ],
       employees: [
-        { empNo: 'A-204', name: 'דנה כהן',  shiftStart: ago(180) },
-        { empNo: 'A-118', name: 'יוסי לוי', shiftStart: ago(95) },
+        { empNo: 'A-201', name: 'ורה',   shift: 'morning',   shiftStart: ago(180) },
+        { empNo: 'A-202', name: 'מירי', shift: 'afternoon', shiftStart: ago(95) },
       ],
       creditReport: [],          // uploaded from the credit-card company
       counters: { order: 1000, receipt: 5000, movement: 1, txn: 70000 },
@@ -133,17 +144,23 @@
   }
 
   // ---- persistence --------------------------------------------------
+  // Safe storage: falls back to in-memory when localStorage is blocked
+  // (e.g. opening the file directly via file:// on some browsers / iOS).
   let _cache = null;
+  const _mem = {};
+  function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return k in _mem ? _mem[k] : null; } }
+  function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { _mem[k] = v; } }
+
   function load() {
     if (_cache) return _cache;
     try {
-      const raw = localStorage.getItem(KEY);
+      const raw = safeGet(KEY);
       _cache = raw ? JSON.parse(raw) : seed();
     } catch (e) { _cache = seed(); }
     save();
     return _cache;
   }
-  function save() { if (_cache) localStorage.setItem(KEY, JSON.stringify(_cache)); emit(); }
+  function save() { if (_cache) safeSet(KEY, JSON.stringify(_cache)); emit(); }
   function reset() { _cache = seed(); save(); return _cache; }
 
   // ---- change events ------------------------------------------------
@@ -266,13 +283,31 @@
     };
   }
 
-  // -- employees / packing -------------------------------------------
+  // -- employees / packing / shifts ----------------------------------
   function employees() { return load().employees.slice(); }
-  function startShift(empNo, name) {
+  function shifts() { return load().shifts.slice(); }
+
+  // which shift covers a given time (default: now). null if outside hours.
+  function currentShift(at) {
+    const d = at ? new Date(at) : new Date();
+    const mins = d.getHours() * 60 + d.getMinutes();
+    const toMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+    return load().shifts.find(s => mins >= toMin(s.from) && mins < toMin(s.to)) || null;
+  }
+
+  // employee assigned to the active shift (or the on-shift one), if any
+  function onShiftEmployee(at) {
+    const sh = currentShift(at);
+    if (!sh) return null;
+    return load().employees.find(e => e.empNo === sh.empNo) || { empNo: sh.empNo, name: sh.empName, shift: sh.id };
+  }
+
+  function startShift(empNo, name, shiftId) {
     const db = load();
     let e = db.employees.find(x => x.empNo === empNo);
-    if (e) { e.shiftStart = nowISO(); if (name) e.name = name; }
-    else { e = { empNo, name: name || empNo, shiftStart: nowISO() }; db.employees.push(e); }
+    if (e) { e.shiftStart = nowISO(); if (name) e.name = name; if (shiftId) e.shift = shiftId; }
+    else { e = { empNo, name: name || empNo, shift: shiftId || null, shiftStart: nowISO() }; db.employees.push(e); }
+    if (shiftId) { const sh = db.shifts.find(s => s.id === shiftId); if (sh) { sh.empNo = e.empNo; sh.empName = e.name; } }
     save();
     return e;
   }
@@ -353,7 +388,7 @@
     STATUS, on, save, reset, load,
     items, reserved, applyInventoryList, movements,
     orders, ordersInProcess, createOrder, approvePayment, setStatus, receiptFor,
-    employees, startShift,
+    employees, startShift, shifts, currentShift, onShiftEmployee,
     inventoryReport, creditCollectionReport, uploadCreditSettlement,
     user: () => load().user,
     settings: () => load().settings,

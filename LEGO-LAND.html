@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#d01012" />
+  <meta name="description" content="מערכת ניהול מכירות לגו - מלאי, חיוב, אריזה, משלוח ודוחות" />
+  <title>LEGO-LAND · ניהול מכירות</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22LEGO-LAND%20%C2%B7%20%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%9E%D7%9B%D7%99%D7%A8%D7%95%D7%AA%22%2C%20%22short_name%22%3A%20%22LEGO-LAND%22%2C%20%22lang%22%3A%20%22he%22%2C%20%22dir%22%3A%20%22rtl%22%2C%20%22start_url%22%3A%20%22.%22%2C%20%22scope%22%3A%20%22.%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22orientation%22%3A%20%22portrait%22%2C%20%22background_color%22%3A%20%22%23f4f6fb%22%2C%20%22theme_color%22%3A%20%22%23d01012%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22data%3Aimage/png%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAADKklEQVR42u3bMU4kMRRF0V4CImIl7D8hZw%2BsgbhBiKDV6uqyq%2Bwq%2B/%2BDdCeACSz7HcRoxOXz5fUqZe3y98eBHy5dTwd58BYPAeBhNSKGrgA8oEbH0AWAx9IsEJoC8DiaDUIzAB5EMyLYDcAjaGYIuwC4eM2OYDMAF64ICDYBcNGKgqAagAtWJARVAFysoiEoBuBCFRFBEQAXqagIVgG4QEVGAIAAWPoLLk7RESwCcGHKgAAAAXD/BRelLAgAEAC3n3RByoQAAAEAgAAwfiVEAIAAAEDpAUhpIbgEASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgARCz74839wBAv3FtzTn6nQOAQUff8vGdA4AQ4699%2BN5nGOUcACQafunDOwcAocf/7NGdA4A0AO4f/awzjHIOAJKNH4A4CAAAAICR/2PozEdVH6QAFAIwnngIACgEYDQxEQAw8M/1yvfvBQAEAAACAAABAIAAAEAAjAjg%2BvWuSQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOT3AQAQAAAIAAAEAAACAAABAIAAAEAAACAAABAAAAgAAAQAAAIAAAEAgAAAQAAAIAAAEAAACAAABAAAAgAAAQCAAABAAAAgAAAQAAAIAAAEAAACAAABAIAAAEAAACAAABAAAAgAAAQAAAIAAAEAgAAAQABUAgAh7vABKAQAQczv%2BgBUAIAg3o88AEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEhLAC6/Hy5DqYb/v3kABAAASg8AAmUaPwACAAABcPMJCJRl/AAIgEcAIFCG8QMgAJYAQKDo418FAIEijx8AAbAGAAJFHX8xAAgUcfxVACBQtPFXA4BAkca/CQAEijL%2BzQAgUITx7wIAgWYf/24AEGjm8TcBAIJmHH5zABBotvE3BwCCZhl%2BVwAgaPThHwIABo04%2BlMAwKBRRv8QgJS1H72FmAB3pcUZAAAAAElFTkSuQmCC%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%22%7D%2C%20%7B%22src%22%3A%20%22data%3Aimage/png%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAMBklEQVR42u3du40UaxhF0Q4BYU0k5O/gkwMxjD0ghIMEYh5V/2uvktYN4OtWnS1daB7fPn1%2BAQBaHr/%2B47nk8YUCuHm0PJftlQAw9ADCQAB4DD6AIBAABh8AQSAAjD4AYkAAGH0AxIAAMPwACAEBYPQBEAMCwPADIAQEgOEHQAgIAMMPgBAQAIYfACEgAAw/AEJAABh/AERAMQB86QAQAqEA8CUDQAjEAsAXCwAREAsAXygAREAoAHyJABACsQDwxQFABMQCwBcGABEQCgBfEgCEQCwAfDEAEAGxAPCFAEAExALAFwEAERALAF8AAERALAB88AAwb4OnBIAPHADmRcCUAPBBA8DcCBgeAD5gAJgfAUMDwAcLAGtEwLAA8IECwDoRMCQAfJAAsFYE3B4APkAAWC8Cbg0AHxwArBkBAgAABIDxB4BCBNwSAD4oAFg7Ai4PAB8QAKwfAQIAAASA8QeAQgRcFgA%2BEADYJwIuCQAfBADsFQECAAAEgPEHgEIECAAAEADGHwAKEfDuAHBwANg3AgQAAAgA4w8AhQgQAAAgAIw/ABQiQAAAgAAw/gBQiAABAAACwPgDQCECBAAACADjDwCFCBAAACAABAAACADjDwBHRoAAAAABYPwBoBABAgAABIAAAIB0ADgYAJwbAQIAAASAAACAbAA4FACcHQECAAAEgAAAAAEAADQCwIEA4PwIEAAAIAAEAAAIAADg/ABwGABoRIAAAAAB4CgAIAAAAAEAAAgAAGD3AAAAYiHgCAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAAIAAAAAEAAAgAAAAAQAAAsAhAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAHAfp6/PrmDO7szCABOeAHezZ3d2Z1BAHD4y9FL1J3dGQQAXpCJF6g7u7MgQADgJRl5ebqzO4sBBABelKEXpzu7sxBAAOBFGXpxurM7CwEEAF6UoRenO7uzEEAAYPhDL053dmchgADA%2BMdemu7rziIAAYDhD7043dOdhQACAOMfe2m6ozuLAAQAxj/20nQ/dxYBCACMf%2Byl6W7uLAIQABj/2EvTvdxZBCAAEACGCXcWAAgAjP/pL013cmcRgABAABgm3FkAIAAw/qe/NN3HnUUAAgABYJhwZwGAAEAAGCbcWQAgABAAhgl3FgAIAGMMIDoQAIEAEA1AccwFgAAQAEYfiP71TTsgAASA8QdiESAABIAAMPxAMAQEgAAQAMYfCEaAABAAAsD4A8EIEAACQAAYfyAYAQJAAAgAAQAIAARANwC8HIBSBAgAASAAjD8QjAABIAAEgAAABAACQAAACAAEgH8MCMC/H4AAEAAAAgABIAAABAACQAAACAAEgAAAEAAIAAEAIAAQAAIAQAAIAAQAgAAQAAgAAAEgABAAAAJAACAAAASAAGB%2BALx8/wIwjAAQAAgAQAAIAAGAAAAEgAAQAAgAQAAIAAGAAAAEgAAQAAgAQAAgAASAAAAEAAJAAAgAQAAgAASAAAAEAAJAAAgAQAAgAASAFxIgABAAAgBAACAABACAAEAACAAAASAAHEEAAAgAAYAAABAAAgABACAABAACAEAACAAEACAABIAAQAAAAkAACAAEACAABIAAQAAAAkAACAAEACAA7IAAEAACABAACAABIAAAAYAAEAACABAACAABIAAAAYAAEAACABAACAABACAAEAACAEAAIAAEAIAAQAAIAAABIAAQAAACQAAgAAAEgABAAAAIAAGAAAAEgAAQAAgAQAAIAAGAAAAEgAAQAAgAQAAIAAGAAAAEgAAQAAJAAAACAAEgAAAi7IAAEAAAAgABIAAABAACQAAACAAEgAAAEAAIAAEAIAAQAAIAQAAgAAQAgABAAAgAAAGAABAAAAJAACAAAASAAEAAAAgAAYAAABAAAgABACAABAACAEAACAAEAIAAEAAIAAABIAAQAAACQAAIAAABgAAQAAACAAEgAAAEAAJAAAAIAASAAAAQAAgAAQAgABAAAgBAACAABACAAEAACAAAASAAEAAAAkAAIAAABIAAQAAACAABgAAAEAACAAEAIAAEAAIAQAAIAAQAgAAQAAgAAAEgAAQAgABAAAgAAAGAABAAAAIAASAAAAQAAkAAAAgABIAAABAACAABACAAEAACAEAAIAAEAIAAEAAIAAABIAAQAAACQAAgAAAEgABAAAAIAAGAAAAQAAIAAQAgAAQAAgBAAAgABACAABAAeAEAAgABIAAABAACQAAACAAEgAAAEAAIAAEAIAAQAAIAQAAgAAQAgABAAAgAAAGAABAAAAJAADiEAAAQAAIAAQAgAAQAAgBAAAgABACAABAACAAAASAAEAAAAkAAIAAABIAAQAAACAABgAAABAACQAAACAAEgAAAEAAIAAEAIAAQAAIAQAAgAAQAgABAAAgAAAGAABAAAAIAASAAAASAAHAEAQAgAAQAAgBAAAgABACAABAACAAAASAAEAAAAkAAIAAABIAAQAAACAABgAAAEAACAAEAYAcEgAAAEAAIAAEAIAAQAAIAQAAgAAQAgABAAAgAAAGAABAAAAIAASAAAAQAAkAAAAgABIAAABAAAgABACAABAACAEAACAAEAIAAEAAIAAABIAAQAAACQAAgAAAEgABAAAAIAAHAHwEgBIDi8AsAASAABAAgABAAAgBAACAAIgEgAoDa//cXAAJAAPhDgUDwD/0JAAEgAAQAIAAQAO0AEAFA5a/8CQABIAD8PgAQ/Pv%2BAkAACAA/EgQEf%2BxHAAgAAeDXAoHgr/wJAAEgAPxkMBD8iV8BIAAEgH8/AAj%2Brr8AEAD%2BMSAA0YAAAAAEAAAgAAAAAQAACAAAQAAAAAIAABAAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAAACAAAQAACAAAAABAAAIAAAAAEAAAgAAEAAAIAAcAQAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAAgAAEAAAgAAAAAQAACAAAAABAAAIAABAAAAAfwuAx8/HMQAgMPy/N18AAIAAAAAEAAAgAAAAAQAA7B4AIgAAzh9/AQAAAkAAAIAAAAA6ASACAODs8RcAACAABAAACAAAoBUAIgAAzh1/AQAAAkAAAEA%2BAEQAAJw5/gIAAASAAAAAASACAODI8RcAACAA/v04IACcM/4CAAAEgAAAAAEgAgDgyPEXAAAgAP7/OCgA7D/%2BAgAABMDrHocFgL3HXwAAgAB4/ePAALDv%2BAsAABAAb3scGgD2HH8BAAAC4O2PgwPAfuP/4QAQAQCw3/gLAAAQAO9/fAAAsM/4CwAAEAAfe3wQALDH%2BF8aACIAAPYY/8sDQAQAwPrjLwAAQABc9/iAAGDd8b8tAEQAAKw7/rcGgAgAgDXHXwAAgAC45/HBAcBa4z8kAEQAAKw1/sMCQAQAwDrjPzQARAAArDH%2BwwNABADA/PGfEgAiAADmjv%2B0ABABADBv/KcGgAgAgDnjPz0ARAAAxn/e/k4NABEAgPGPBoAIAMD4RwNABABg/KMBIAIAMP7RABACABj%2BcACIAACMfzQARAAAxj8aAEIAAMMfDgARAIDxjwaACADA%2BEcDQAgAYPjDASAEADD84QAQAQAY/2gACAEADH84AIQAAIY/HABCAADDHw4AIQCA4Q8HgBAAwPCHA0AMAFAefQEgBACIDr8AEAMARj%2B%2BeQJADAAYfQHgEQQABl8AeAQBgMEXAB5hAGDoDwoAAKDlBwlb0DQUFs12AAAAAElFTkSuQmCC%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSI5NiIgZmlsbD0iI2QwMTAxMiIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDk2IDE1MCkiPgogICAgPCEtLSBMRUdPIGJyaWNrIGJvZHkgLS0+CiAgICA8cmVjdCB4PSIwIiB5PSI0MCIgd2lkdGg9IjMyMCIgaGVpZ2h0PSIxODAiIHJ4PSIxOCIgZmlsbD0iI2Y1YzUxOCIvPgogICAgPCEtLSBzdHVkcyAtLT4KICAgIDxnIGZpbGw9IiNmNWM1MTgiIHN0cm9rZT0iI2NhYTAwZiIgc3Ryb2tlLXdpZHRoPSI2Ij4KICAgICAgPGVsbGlwc2UgY3g9IjcwIiAgY3k9IjQwIiByeD0iNDIiIHJ5PSIyMiIvPgogICAgICA8ZWxsaXBzZSBjeD0iMTYwIiBjeT0iNDAiIHJ4PSI0MiIgcnk9IjIyIi8+CiAgICAgIDxlbGxpcHNlIGN4PSIyNTAiIGN5PSI0MCIgcng9IjQyIiByeT0iMjIiLz4KICAgIDwvZz4KICAgIDxyZWN0IHg9IjAiIHk9IjQwIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgcng9IjE4IiBmaWxsPSJub25lIiBzdHJva2U9IiNjYWEwMGYiIHN0cm9rZS13aWR0aD0iNiIvPgogICAgPCEtLSBzaGluZSAtLT4KICAgIDxyZWN0IHg9IjE4IiB5PSI2NCIgd2lkdGg9IjI4NCIgaGVpZ2h0PSI0MCIgcng9IjE0IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjI1Ii8+CiAgPC9nPgogIDx0ZXh0IHg9IjI1NiIgeT0iNDIwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNzQiIGZvbnQtd2VpZ2h0PSJib2xkIgogICAgICAgIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIyIj5MRUdPLUxBTkQ8L3RleHQ+Cjwvc3ZnPgo=" />
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAACvklEQVR42u3cMU7DQBBA0T0CospJuH9Dzx04Q+qAgIICFO/G9s7MPks/7Sgzr7Tc3p6eb1KV2tfPwY9F6yxnh4F2QJ2N+xDQjqVZsHcF7TiaDXsX0I6hKLAfBu0AioR6GLSlKyLsIdAWraiou0FbsCKj7gJtsYqOejNoC1UG1JtAW6SyoL4L2gKVCTXQWge0xSkb6n9BW5gyogZa9UFblLKiBlq1QVuQMqMGWnVBW4yyowZaQEvhQUulPjQjAS0BLQEtAS2gJaAloCWgJaAFtAS0BLQEtAS0gJaAloCWgJaAFtAS0BLQEtAS0AJaAloCWgJaAlpAS0BLQEtAC+hqf+j6ehlq5uzZ84EugnivA1eZXQF3A3n8sKvPBzoJ5i2HrT47K+oGc/9hV5mdEXWDue+oq88HugDo30ddbTbQBfAqL/IGsirBbjCrEuoGsyqhBlpAw6yoqIEW0EALaKCBBvq72/uLggQ00EADDTTQQAtooAU00EADDTTQQAMNNNACGmgBDTTQQAMNNNAgAQ20gPb6qLw+CrSABhpooAU00AIaaAENtIAGGmigBTTQAhpoAQ000EADDTTQAhpoAQ20gAYaaKAFNNACGmgBDbSABhpooAU00AIaaAENtIAGGmigBTTQAhpoAQ20gAYaaKAFNNACGmgBDbSAhhpmoAV0PtBQw1wONNQwlwMNN8RlQUtAC2gJaAloCWgJaAEtAS0BLQEtAS2gJaAloCWgJaAFtAS0BLQEtAS0gJaAlmaBbp+PZSg15B/DQAtoKTxoqJUZM9CqDxpqZcUMtNYADbUyYgZa64CGWtkw3wUNtTJhBlrrgYZaWTBvBg21MmDuAg21omPuBg21ImMeAg21omIeBg21ImJ+CDTYigR5N9BQKwrm3UCDrdmQDwENtmZBPhQ02Dob8img4dYZiP8ELVXpA2/zUB6cA8mEAAAAAElFTkSuQmCC" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LEGO-LAND" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <style>
+:root{
+  --red:#d01012; --yellow:#f5c518; --blue:#0057a8; --green:#1aa64b;
+  --ink:#16202c; --muted:#65788c; --line:#e3e9f0; --bg:#f4f6fb; --card:#fff;
+  --shadow:0 6px 22px rgba(20,40,70,.10); --radius:16px;
+  --ok:#1aa64b; --warn:#e8920c; --bad:#d01012; --info:#0057a8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Segoe UI",Arial,"Helvetica Neue",sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.5;
+  -webkit-tap-highlight-color:transparent;
+  padding-bottom:64px;
+}
+h1,h2,h3{margin:0}
+button{font-family:inherit;cursor:pointer}
+.muted{color:var(--muted);font-size:.85rem}
+
+/* App bar */
+.appbar{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:10px 16px;background:linear-gradient(90deg,var(--red),#a50c0e);
+  color:#fff;box-shadow:var(--shadow)
+}
+.appbar__brand{display:flex;align-items:center;gap:6px}
+.appbar__brand h1{font-size:1.15rem;letter-spacing:.5px;margin-inline-start:6px}
+.appbar__right{display:flex;align-items:center;gap:10px}
+.brick{width:16px;height:16px;border-radius:3px;position:relative;display:inline-block;box-shadow:inset 0 -3px rgba(0,0,0,.18)}
+.brick::after{content:"";position:absolute;top:-4px;inset-inline-start:4px;width:8px;height:5px;border-radius:50%;background:inherit;box-shadow:inset 0 -2px rgba(0,0,0,.15)}
+.brick--red{background:var(--yellow)}.brick--yellow{background:#fff}.brick--blue{background:var(--blue)}
+.clock{font-variant-numeric:tabular-nums;font-size:.9rem;opacity:.95}
+
+/* buttons */
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:600;background:var(--blue);color:#fff}
+.btn--ghost{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.5)}
+.btn--tiny{padding:5px 9px;font-size:.78rem;border-radius:8px}
+.btn--ok{background:var(--green)} .btn--warn{background:var(--warn)} .btn--bad{background:var(--bad)}
+.btn--line{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* greeting */
+.greeting{padding:18px 16px 4px}
+.greeting__title{font-size:1.7rem}
+.greeting__sub{color:var(--muted);margin:4px 0 0}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding:14px 16px}
+.kpi{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);border-inline-start:5px solid var(--blue)}
+.kpi h4{margin:0;color:var(--muted);font-size:.8rem;font-weight:600}
+.kpi .v{font-size:1.6rem;font-weight:800;margin-top:4px}
+.kpi--a{border-color:var(--red)}.kpi--b{border-color:var(--green)}.kpi--c{border-color:var(--yellow)}.kpi--d{border-color:var(--blue)}
+
+/* tiles nav */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:6px 16px 16px}
+.tile{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:start;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+  transition:transform .08s ease, box-shadow .12s}
+.tile:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(20,40,70,.16)}
+.tile:active{transform:translateY(0)}
+.tile__ico{font-size:1.7rem}
+.tile__t{font-weight:800;font-size:1.05rem}
+.tile__s{color:var(--muted);font-size:.8rem}
+.tile--inv{border-top:4px solid var(--yellow)}
+.tile--orders{border-top:4px solid var(--blue)}
+.tile--pack{border-top:4px solid var(--green)}
+.tile--ship{border-top:4px solid var(--red)}
+.tile--rep{border-top:4px solid #7b3ff2}
+.tile--link{border-top:4px solid #0aa3a3}
+
+/* panels & tables */
+.panel{background:var(--card);margin:8px 16px;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.panel__head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+.panel__head h3{font-size:1.05rem}
+.dot--live{color:var(--green);font-weight:700;font-size:.82rem;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.table-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+.tbl th,.tbl td{padding:10px 12px;text-align:start;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th{background:#fafbfe;color:var(--muted);font-weight:700;font-size:.8rem;position:sticky;top:0}
+.tbl tbody tr:hover{background:#f7f9ff}
+.tbl .num{font-variant-numeric:tabular-nums;font-weight:700}
+
+/* status chips */
+.chip{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.76rem;font-weight:700}
+.chip--new{background:#eef2f7;color:#5b6b7c}
+.chip--approved{background:#e6f0fb;color:var(--blue)}
+.chip--packing{background:#fff5e0;color:var(--warn)}
+.chip--packed{background:#e9f7ee;color:var(--green)}
+.chip--shipping{background:#f0e9ff;color:#7b3ff2}
+.chip--shipped{background:#e9f7ee;color:var(--green)}
+.chip--delivered{background:#dff5e6;color:#0d7a35}
+.chip--low{background:#fde8e8;color:var(--red)}
+.chip--ok{background:#e9f7ee;color:var(--green)}
+.elapsed{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.elapsed--warn{color:var(--warn)} .elapsed--bad{color:var(--bad)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal[hidden]{display:none}
+.modal__backdrop{position:absolute;inset:0;background:rgba(12,22,38,.55)}
+.modal__card{position:relative;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  width:min(960px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal__head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:#fafbfe}
+.modal__head h3{font-size:1.15rem}
+.modal__x{border:0;background:transparent;font-size:1.2rem;color:var(--muted)}
+.modal__body{padding:16px 18px;overflow:auto}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:.82rem;font-weight:700;color:var(--muted)}
+.field input,.field select,.field textarea{
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.95rem;font-family:inherit;background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--blue);border-color:var(--blue)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:560px){.grid2,.grid3{grid-template-columns:1fr}}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.hint{background:#f0f6ff;border:1px solid #cfe1fb;border-radius:10px;padding:10px 12px;font-size:.84rem;color:#2c4a6b;margin-bottom:12px}
+textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-height:1.6}
+
+/* sub-tabs */
+.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.subtab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-weight:700;font-size:.85rem;color:var(--muted)}
+.subtab.is-on{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* sticker (packing label) */
+.sticker{border:2px dashed #222;border-radius:12px;padding:14px;max-width:360px;background:#fffef5;font-family:ui-monospace,Consolas,monospace}
+.sticker h4{margin:0 0 6px;font-size:1.05rem}
+.sticker .bc{font-size:1.4rem;letter-spacing:3px;text-align:center;background:#fff;border:1px solid #000;padding:6px;margin:8px 0;font-family:"Libre Barcode 39",monospace}
+.sticker .row{display:flex;justify-content:space-between;font-size:.82rem;border-top:1px dotted #bbb;padding:3px 0}
+
+/* receipt */
+.receipt{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;max-width:460px;margin:auto}
+.receipt h3{text-align:center}
+.receipt .ln{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dotted #ddd;font-size:.9rem}
+.receipt .total{font-weight:800;font-size:1.1rem;border-top:2px solid #000;margin-top:6px;padding-top:6px}
+
+/* drill rows */
+.drill{background:#fbfcff}
+.miss{background:#fff1f1}
+.matchok{background:#f1fbf4}
+
+/* toast */
+.toast{position:fixed;inset-inline:0;bottom:74px;margin:auto;width:max-content;max-width:90%;
+  background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:60;font-weight:600}
+.toast[hidden]{display:none}
+
+/* footer */
+.foot{position:fixed;bottom:0;inset-inline:0;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:8px 16px;background:#fff;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted);z-index:20}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+
+</style>
+</head>
+<body>
+  <!-- Early diagnostic: surface any boot error visibly instead of a dead screen -->
+  <script>
+    window.__legoErr = function (msg) {
+      var b = document.getElementById('bootErr');
+      if (!b) {
+        b = document.createElement('div'); b.id = 'bootErr';
+        b.style.cssText = 'position:fixed;inset-inline:0;top:0;z-index:9999;background:#d01012;color:#fff;padding:10px 14px;font:14px/1.4 Arial;direction:rtl';
+        document.body.appendChild(b);
+      }
+      b.textContent = '⚠ שגיאה בטעינה: ' + msg + ' — נסה לפתוח את הקובץ בדפדפן Chrome/Safari (לא בתצוגה מקדימה).';
+    };
+    window.addEventListener('error', function (e) { window.__legoErr(e.message || e.error); });
+  </script>
+
+  <!-- App bar -->
+  <header class="appbar">
+    <div class="appbar__brand">
+      <span class="brick brick--red"></span>
+      <span class="brick brick--yellow"></span>
+      <span class="brick brick--blue"></span>
+      <h1>LEGO-LAND</h1>
+    </div>
+    <div class="appbar__right">
+      <span id="liveClock" class="clock" aria-live="polite"></span>
+      <button id="installBtn" class="btn btn--ghost" hidden>⬇ הורד למסך הבית</button>
+    </div>
+  </header>
+
+  <!-- Greeting -->
+  <section class="greeting" id="greeting">
+    <h2 class="greeting__title"><span id="greetUser">דוד</span> שלום 👋</h2>
+    <p class="greeting__sub">ברוך הבא למרכז הבקרה של מכירות הלגו. כל השרשרת - מהזמנה ועד מסירה - במקום אחד.</p>
+  </section>
+
+  <!-- KPI strip -->
+  <section class="kpis" id="kpis"></section>
+
+  <!-- Main navigation buttons -->
+  <nav class="tiles" id="mainNav" aria-label="ניווט ראשי">
+    <button class="tile tile--inv"     data-view="inventory"><span class="tile__ico">📦</span><span class="tile__t">עדכון מלאי</span><span class="tile__s">העלאת רשימות ודוח תנועות</span></button>
+    <button class="tile tile--orders"  data-view="orders"><span class="tile__ico">🧾</span><span class="tile__t">מצב הזמנות</span><span class="tile__s">סטטוסים וזמנים בלייב</span></button>
+    <button class="tile tile--pack"    data-view="packing"><span class="tile__ico">🎁</span><span class="tile__t">אריזה</span><span class="tile__s">משמרת אורזים ומדבקות</span></button>
+    <button class="tile tile--ship"    data-view="shipping"><span class="tile__ico">🚚</span><span class="tile__t">משלוח</span><span class="tile__s">כתובות וזמני הובלה</span></button>
+    <button class="tile tile--rep"     data-view="reports"><span class="tile__ico">📊</span><span class="tile__t">דוחות</span><span class="tile__s">יתרות, מכירות וגביה אשראי</span></button>
+    <button class="tile tile--link"    data-view="orderlink"><span class="tile__ico">🔗</span><span class="tile__t">לינק הזמנה</span><span class="tile__s">קליטת הזמנה חדשה</span></button>
+  </nav>
+
+  <!-- Live dashboard: orders in process -->
+  <section class="panel" id="livePanel">
+    <div class="panel__head">
+      <h3>מצב הזמנות בתהליך - לייב</h3>
+      <span class="dot dot--live">● עדכון חי</span>
+    </div>
+    <div class="table-wrap">
+      <table class="tbl" id="liveOrdersTbl">
+        <thead>
+          <tr>
+            <th>הזמנה</th><th>לקוח</th><th>פריטים</th><th>סטטוס</th>
+            <th>זמן מאישור התשלום</th><th>קבלה</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Live dashboard: stock availability -->
+  <section class="panel" id="stockPanel">
+    <div class="panel__head">
+      <h3>זמינות מלאי כעת</h3>
+      <span class="muted" id="stockUpdated"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="tbl" id="liveStockTbl">
+        <thead>
+          <tr><th>פריט</th><th>מק"ט</th><th>ברקוד</th><th>זמין במלאי</th><th>שמור להזמנות</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Generic view modal -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__card" role="dialog" aria-modal="true">
+      <div class="modal__head">
+        <h3 id="modalTitle"></h3>
+        <button class="modal__x" data-close aria-label="סגירה">✕</button>
+      </div>
+      <div class="modal__body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" hidden></div>
+
+  <footer class="foot">
+    <span>LEGO-LAND · מערכת ניהול מכירות</span>
+    <button id="resetDemo" class="btn btn--tiny btn--ghost">איפוס נתוני הדגמה</button>
+  </footer>
+
+  <script>
+/* ============================================================
+   LEGO-LAND · Data layer
+   Self-contained store (localStorage) that links:
+   Inventory  ⇄  Orders/Billing  ⇄  Packing  ⇄  Shipping  ⇄  Reports
+   ============================================================ */
+(function (global) {
+  'use strict';
+
+  const KEY = 'legoland.db.v1';
+
+  // ---- status model -------------------------------------------------
+  const STATUS = {
+    new:       { label: 'ממתין לתשלום', chip: 'new',       order: 0 },
+    approved:  { label: 'תשלום אושר',   chip: 'approved',  order: 1 },
+    packing:   { label: 'באריזה',       chip: 'packing',   order: 2 },
+    packed:    { label: 'נארז',         chip: 'packed',    order: 3 },
+    shipping:  { label: 'במשלוח',       chip: 'shipping',  order: 4 },
+    shipped:   { label: 'נשלח',         chip: 'shipped',   order: 5 },
+    delivered: { label: 'נמסר',         chip: 'delivered', order: 6 },
+  };
+
+  const nowISO = () => new Date().toISOString();
+  const clone  = (o) => JSON.parse(JSON.stringify(o));
+  const uid    = (p) => p + Math.random().toString(36).slice(2, 8);
+
+  // ---- seed (demo data) --------------------------------------------
+  function seed() {
+    const t = Date.now();
+    const ago = (min) => new Date(t - min * 60000).toISOString();
+
+    const items = [
+      { sku: 'LG-10311', name: 'סחלב (Orchid)',            barcode: '5702016915990', price: 199, qty: 40 },
+      { sku: 'LG-21318', name: 'בית העץ (Tree House)',      barcode: '5702016368314', price: 899, qty: 12 },
+      { sku: 'LG-42143', name: 'פרארי דייטונה',            barcode: '5702017156897', price: 1499, qty: 6 },
+      { sku: 'LG-31203', name: 'מפת העולם',                barcode: '5702017153124', price: 749, qty: 9 },
+      { sku: 'LG-75313', name: 'AT-AT מלחמת הכוכבים',       barcode: '5702017155142', price: 2799, qty: 4 },
+      { sku: 'LG-10497', name: 'רכבת גלקסיה',              barcode: '5702017415086', price: 599, qty: 18 },
+      { sku: 'LG-21330', name: 'הבית הבודד (Home Alone)',  barcode: '5702017153131', price: 1099, qty: 7 },
+      { sku: 'LG-40524', name: 'חמניות',                   barcode: '5702017183152', price: 89,  qty: 60 },
+      { sku: 'LG-71043', name: 'טירת הוגוורטס',            barcode: '5702016667071', price: 3499, qty: 3 },
+      { sku: 'LG-10307', name: 'עץ בונסאי',               barcode: '5702017152646', price: 219, qty: 22 },
+      { sku: 'LG-21034', name: 'נוף לונדון',              barcode: '5702016368031', price: 199, qty: 15 },
+      { sku: 'LG-42115', name: 'למבורגיני סיאן',          barcode: '5702016617441', price: 1399, qty: 5 },
+      { sku: 'LG-10294', name: 'טיטאניק',                 barcode: '5702016852448', price: 2599, qty: 4 },
+      { sku: 'LG-40747', name: 'נרקיסים',                 barcode: '5702017369884', price: 69,  qty: 80 },
+      { sku: 'LG-21341', name: 'הוקוס פוקוס',             barcode: '5702017153308', price: 899, qty: 8 },
+    ];
+
+    const db = {
+      user: { name: 'דוד' },
+      items,
+      movements: [],
+      orders: [],
+      shifts: [
+        { id: 'morning',   name: 'משמרת בוקר',   from: '08:00', to: '14:00', empNo: 'A-201', empName: 'ורה' },
+        { id: 'afternoon', name: 'משמרת צהריים', from: '14:00', to: '18:00', empNo: 'A-202', empName: 'מירי' },
+      ],
+      employees: [
+        { empNo: 'A-201', name: 'ורה',   shift: 'morning',   shiftStart: ago(180) },
+        { empNo: 'A-202', name: 'מירי', shift: 'afternoon', shiftStart: ago(95) },
+      ],
+      creditReport: [],          // uploaded from the credit-card company
+      counters: { order: 1000, receipt: 5000, movement: 1, txn: 70000 },
+      settings: { lowStock: 5 },
+      _seededAt: nowISO(),
+    };
+
+    // opening inventory movements
+    items.forEach((it) => {
+      db.movements.push({
+        id: 'M' + db.counters.movement++, ts: db._seededAt, sku: it.sku,
+        type: 'in', qty: it.qty, balanceAfter: it.qty, reason: 'יתרת פתיחה', ref: 'OPENING',
+      });
+    });
+
+    // sample orders across the pipeline
+    const mk = (mins, status, cust, addr, phone, lines, card) => {
+      const id = 'ORD-' + db.counters.order++;
+      const created = ago(mins + 8);
+      const o = {
+        id, createdAt: created, customer: cust, address: addr, phone,
+        lines, status, courier: 'דואר שליחים', tracking: null,
+        paymentApprovedAt: null, creditTxn: null, receiptNo: null,
+        packedAt: null, packedBy: null, shippedAt: null, deliveredAt: null,
+      };
+      // approve payment for everything beyond "new"
+      if (STATUS[status].order >= 1) {
+        o.paymentApprovedAt = ago(mins);
+        o.creditTxn = { id: 'TX' + db.counters.txn++, amount: linesTotal(lines, items), card, last4: String(1000 + Math.floor(Math.random()*8999)).slice(-4) };
+      }
+      if (STATUS[status].order >= 2) { o.packedBy = db.employees[mins % 2]; }
+      if (STATUS[status].order >= 3) { o.packedAt = ago(Math.max(1, mins - 22)); }
+      if (STATUS[status].order >= 4) { o.shippedAt = ago(Math.max(1, mins - 35)); o.tracking = 'IL' + uid('').toUpperCase(); o.receiptNo = 'R-' + db.counters.receipt++; }
+      if (STATUS[status].order >= 6) { o.deliveredAt = ago(Math.max(1, mins - 80)); }
+      return o;
+    };
+
+    db.orders.push(
+      mk(4,   'new',       'אבי ישראלי', 'הרצל 14, תל אביב',     '050-1112233', [{ sku: 'LG-40524', qty: 3 }], 'ויזה'),
+      mk(12,  'approved',  'מרים גולן',  'ויצמן 8, רעננה',       '052-2223344', [{ sku: 'LG-10311', qty: 1 }, { sku: 'LG-40524', qty: 2 }], 'מאסטרקארד'),
+      mk(33,  'packing',   'רון אבידן',  'בן גוריון 22, חיפה',   '054-3334455', [{ sku: 'LG-42143', qty: 1 }], 'ויזה'),
+      mk(58,  'packed',    'נועה ברק',   'סוקולוב 3, הרצליה',    '053-4445566', [{ sku: 'LG-21330', qty: 1 }, { sku: 'LG-40524', qty: 1 }], 'אמריקן אקספרס'),
+      mk(95,  'shipping',  'דני פרץ',    'הנשיא 51, נתניה',      '058-5556677', [{ sku: 'LG-10497', qty: 2 }], 'ויזה'),
+      mk(160, 'shipped',   'ליאת שמש',   'אלנבי 90, תל אביב',    '050-6667788', [{ sku: 'LG-31203', qty: 1 }], 'מאסטרקארד'),
+      mk(240, 'delivered', 'עומר טל',    'הגליל 7, כרמיאל',      '052-7778899', [{ sku: 'LG-75313', qty: 1 }], 'ויזה'),
+    );
+
+    // post inventory deductions for every approved order
+    db.orders.forEach((o) => { if (o.paymentApprovedAt) postOrderOut(db, o); });
+
+    // a credit-company collection report that mostly matches (with one mismatch + one missing)
+    db.orders.filter(o => o.creditTxn).forEach((o, i) => {
+      let amount = o.creditTxn.amount;
+      if (i === 1) amount = amount - 5;        // amount mismatch
+      if (i === 3) return;                      // missing from collection report
+      db.creditReport.push({ txnId: o.creditTxn.id, amount, date: o.paymentApprovedAt, ref: 'SETTLE-' + (8800 + i) });
+    });
+
+    return db;
+  }
+
+  function linesTotal(lines, items) {
+    return lines.reduce((s, l) => s + (l.price != null ? l.price : priceOf(l.sku, items)) * l.qty, 0);
+  }
+  function priceOf(sku, items) {
+    const db = items ? { items } : load();
+    const it = db.items.find(i => i.sku === sku);
+    return it ? it.price : 0;
+  }
+
+  // deduct stock for an order (idempotent via ref check)
+  function postOrderOut(db, o) {
+    o.lines.forEach((l) => {
+      const ref = 'OUT:' + o.id + ':' + l.sku;
+      if (db.movements.some(m => m.ref === ref)) return;
+      const it = db.items.find(i => i.sku === l.sku);
+      if (!it) return;
+      it.qty -= l.qty;
+      db.movements.push({
+        id: 'M' + db.counters.movement++, ts: o.paymentApprovedAt || nowISO(), sku: l.sku,
+        type: 'out', qty: l.qty, balanceAfter: it.qty, reason: 'הזמנה ' + o.id, ref,
+      });
+    });
+  }
+
+  // ---- persistence --------------------------------------------------
+  // Safe storage: falls back to in-memory when localStorage is blocked
+  // (e.g. opening the file directly via file:// on some browsers / iOS).
+  let _cache = null;
+  const _mem = {};
+  function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return k in _mem ? _mem[k] : null; } }
+  function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { _mem[k] = v; } }
+
+  function load() {
+    if (_cache) return _cache;
+    try {
+      const raw = safeGet(KEY);
+      _cache = raw ? JSON.parse(raw) : seed();
+    } catch (e) { _cache = seed(); }
+    save();
+    return _cache;
+  }
+  function save() { if (_cache) safeSet(KEY, JSON.stringify(_cache)); emit(); }
+  function reset() { _cache = seed(); save(); return _cache; }
+
+  // ---- change events ------------------------------------------------
+  const listeners = new Set();
+  function on(fn) { listeners.add(fn); return () => listeners.delete(fn); }
+  function emit() { listeners.forEach(fn => { try { fn(_cache); } catch (e) {} }); }
+
+  // ============================================================
+  //  PUBLIC API
+  // ============================================================
+
+  // -- inventory ------------------------------------------------------
+  function items() { return load().items.slice(); }
+
+  function reserved(sku) {
+    // qty on approved-but-not-yet-shipped orders is already deducted from stock,
+    // but we also surface "reserved" = approved & not delivered for visibility.
+    return load().orders
+      .filter(o => o.paymentApprovedAt && STATUS[o.status].order < STATUS.shipped.order)
+      .reduce((s, o) => s + o.lines.filter(l => l.sku === sku).reduce((a, l) => a + l.qty, 0), 0);
+  }
+
+  /* Apply an inventory list update.
+     rows: [{sku, name?, barcode?, price?, qty, mode:'add'|'set'}] */
+  function applyInventoryList(rows, note) {
+    const db = load();
+    const result = { added: 0, created: 0, movements: 0 };
+    rows.forEach((r) => {
+      if (!r.sku) return;
+      let it = db.items.find(i => i.sku === r.sku);
+      if (!it) {
+        it = { sku: r.sku, name: r.name || r.sku, barcode: r.barcode || '', price: +r.price || 0, qty: 0 };
+        db.items.push(it); result.created++;
+      } else {
+        if (r.name)    it.name = r.name;
+        if (r.barcode) it.barcode = r.barcode;
+        if (r.price)   it.price = +r.price;
+      }
+      const delta = r.mode === 'set' ? (+r.qty - it.qty) : (+r.qty || 0);
+      if (delta === 0) return;
+      it.qty += delta;
+      db.movements.push({
+        id: 'M' + db.counters.movement++, ts: nowISO(), sku: it.sku,
+        type: delta >= 0 ? 'in' : 'out', qty: Math.abs(delta), balanceAfter: it.qty,
+        reason: note || (r.mode === 'set' ? 'התאמת ספירה' : 'הוספת מלאי מרשימה'), ref: 'LIST',
+      });
+      result.added += delta; result.movements++;
+    });
+    save();
+    return result;
+  }
+
+  function movements() { return load().movements.slice().reverse(); }
+
+  // -- orders ---------------------------------------------------------
+  function orders() { return load().orders.slice(); }
+  function ordersInProcess() {
+    return load().orders
+      .filter(o => STATUS[o.status].order >= 1 && STATUS[o.status].order < STATUS.delivered.order)
+      .sort((a, b) => new Date(a.paymentApprovedAt || a.createdAt) - new Date(b.paymentApprovedAt || b.createdAt));
+  }
+
+  function createOrder({ customer, address, phone, courier, lines }) {
+    const db = load();
+    const o = {
+      id: 'ORD-' + db.counters.order++, createdAt: nowISO(), customer, address, phone,
+      courier: courier || 'דואר שליחים', tracking: null,
+      lines: lines.map(l => ({ sku: l.sku, qty: +l.qty, price: priceOf(l.sku) })),
+      status: 'new', paymentApprovedAt: null, creditTxn: null, receiptNo: null,
+      packedAt: null, packedBy: null, shippedAt: null, deliveredAt: null,
+    };
+    db.orders.push(o); save();
+    return o;
+  }
+
+  function approvePayment(orderId, card) {
+    const db = load();
+    const o = db.orders.find(x => x.id === orderId);
+    if (!o || o.paymentApprovedAt) return o;
+    // stock guard
+    for (const l of o.lines) {
+      const it = db.items.find(i => i.sku === l.sku);
+      if (!it || it.qty < l.qty) throw new Error('אין מספיק מלאי לפריט ' + l.sku);
+    }
+    o.paymentApprovedAt = nowISO();
+    o.status = 'approved';
+    o.creditTxn = { id: 'TX' + db.counters.txn++, amount: linesTotal(o.lines, db.items), card: card || 'ויזה', last4: String(1000 + Math.floor(Math.random()*8999)).slice(-4) };
+    postOrderOut(db, o);
+    save();
+    return o;
+  }
+
+  function setStatus(orderId, status, extra) {
+    const db = load();
+    const o = db.orders.find(x => x.id === orderId);
+    if (!o) return;
+    o.status = status;
+    if (status === 'packing' && extra && extra.packedBy) o.packedBy = extra.packedBy;
+    if (status === 'packed')  { o.packedAt = nowISO(); if (extra && extra.packedBy) o.packedBy = extra.packedBy; }
+    if (status === 'shipping') {
+      o.shippedAt = nowISO();
+      o.tracking = 'IL' + uid('').toUpperCase();
+      if (!o.receiptNo) o.receiptNo = 'R-' + db.counters.receipt++;   // receipt issued as order leaves
+      if (extra && extra.courier) o.courier = extra.courier;
+    }
+    if (status === 'shipped' && !o.receiptNo) o.receiptNo = 'R-' + db.counters.receipt++;
+    if (status === 'delivered') o.deliveredAt = nowISO();
+    save();
+    return o;
+  }
+
+  function receiptFor(orderId) {
+    const o = load().orders.find(x => x.id === orderId);
+    if (!o) return null;
+    const its = load().items;
+    return {
+      no: o.receiptNo, date: o.shippedAt || nowISO(), order: o,
+      lines: o.lines.map(l => { const it = its.find(i => i.sku === l.sku) || {}; return { sku: l.sku, name: it.name || l.sku, qty: l.qty, price: l.price != null ? l.price : it.price, total: (l.price != null ? l.price : it.price) * l.qty }; }),
+      total: linesTotal(o.lines, its),
+    };
+  }
+
+  // -- employees / packing / shifts ----------------------------------
+  function employees() { return load().employees.slice(); }
+  function shifts() { return load().shifts.slice(); }
+
+  // which shift covers a given time (default: now). null if outside hours.
+  function currentShift(at) {
+    const d = at ? new Date(at) : new Date();
+    const mins = d.getHours() * 60 + d.getMinutes();
+    const toMin = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+    return load().shifts.find(s => mins >= toMin(s.from) && mins < toMin(s.to)) || null;
+  }
+
+  // employee assigned to the active shift (or the on-shift one), if any
+  function onShiftEmployee(at) {
+    const sh = currentShift(at);
+    if (!sh) return null;
+    return load().employees.find(e => e.empNo === sh.empNo) || { empNo: sh.empNo, name: sh.empName, shift: sh.id };
+  }
+
+  function startShift(empNo, name, shiftId) {
+    const db = load();
+    let e = db.employees.find(x => x.empNo === empNo);
+    if (e) { e.shiftStart = nowISO(); if (name) e.name = name; if (shiftId) e.shift = shiftId; }
+    else { e = { empNo, name: name || empNo, shift: shiftId || null, shiftStart: nowISO() }; db.employees.push(e); }
+    if (shiftId) { const sh = db.shifts.find(s => s.id === shiftId); if (sh) { sh.empNo = e.empNo; sh.empName = e.name; } }
+    save();
+    return e;
+  }
+
+  // -- reports --------------------------------------------------------
+  // inventory balance + sales (approved credit transactions) per item
+  function inventoryReport() {
+    const db = load();
+    return db.items.map((it) => {
+      const moves = db.movements.filter(m => m.sku === it.sku);
+      const totalIn  = moves.filter(m => m.type === 'in').reduce((s, m) => s + m.qty, 0);
+      const totalOut = moves.filter(m => m.type === 'out').reduce((s, m) => s + m.qty, 0);
+      // sales = approved orders containing this sku
+      const sales = db.orders.filter(o => o.creditTxn).flatMap(o =>
+        o.lines.filter(l => l.sku === it.sku).map(l => ({
+          orderId: o.id, txnId: o.creditTxn.id, date: o.paymentApprovedAt,
+          qty: l.qty, price: l.price != null ? l.price : it.price,
+          amount: (l.price != null ? l.price : it.price) * l.qty, card: o.creditTxn.card,
+        })));
+      return {
+        sku: it.sku, name: it.name, barcode: it.barcode, price: it.price,
+        balance: it.qty, totalIn, totalOut, reserved: reserved(it.sku),
+        soldUnits: sales.reduce((s, x) => s + x.qty, 0),
+        soldAmount: sales.reduce((s, x) => s + x.amount, 0),
+        sales,
+      };
+    });
+  }
+
+  // credit collection report for a date range + reconciliation vs uploaded settlement
+  function creditCollectionReport(fromISO, toISO) {
+    const db = load();
+    const from = fromISO ? new Date(fromISO) : new Date(0);
+    const to   = toISO ? new Date(new Date(toISO).getTime() + 86399000) : new Date(8e15);
+    const sales = db.orders.filter(o => o.creditTxn && o.paymentApprovedAt)
+      .filter(o => { const d = new Date(o.paymentApprovedAt); return d >= from && d <= to; })
+      .map(o => ({
+        orderId: o.id, txnId: o.creditTxn.id, date: o.paymentApprovedAt,
+        customer: o.customer, card: o.creditTxn.card, last4: o.creditTxn.last4,
+        amount: o.creditTxn.amount, receiptNo: o.receiptNo,
+      }));
+
+    // reconciliation against creditReport (settlement file from credit company)
+    const byTxn = {}; db.creditReport.forEach(r => { byTxn[r.txnId] = r; });
+    const matchedTxns = new Set();
+    const recon = sales.map((s) => {
+      const c = byTxn[s.txnId];
+      if (c) matchedTxns.add(s.txnId);
+      const diff = c ? (s.amount - c.amount) : null;
+      return {
+        ...s, collected: c ? c.amount : null, settleRef: c ? c.ref : null,
+        diff,
+        match: c ? (Math.abs(diff) < 0.005 ? 'match' : 'amount') : 'missing',
+      };
+    });
+    // collected lines that have no matching sale
+    const orphan = db.creditReport.filter(r => !sales.some(s => s.txnId === r.txnId))
+      .map(r => ({ txnId: r.txnId, collected: r.amount, settleRef: r.ref, date: r.date, match: 'orphan' }));
+
+    const totals = {
+      salesCount: sales.length,
+      salesAmount: sales.reduce((s, x) => s + x.amount, 0),
+      collectedAmount: db.creditReport.filter(r => sales.some(s => s.txnId === r.txnId)).reduce((s, r) => s + r.amount, 0),
+      mismatches: recon.filter(r => r.match !== 'match').length + orphan.length,
+    };
+    return { recon, orphan, totals, hasSettlement: db.creditReport.length > 0 };
+  }
+
+  function uploadCreditSettlement(rows) {
+    const db = load();
+    db.creditReport = rows.map(r => ({ txnId: r.txnId, amount: +r.amount, date: r.date || nowISO(), ref: r.ref || '' }));
+    save();
+    return db.creditReport.length;
+  }
+
+  // ---- expose -------------------------------------------------------
+  global.DB = {
+    STATUS, on, save, reset, load,
+    items, reserved, applyInventoryList, movements,
+    orders, ordersInProcess, createOrder, approvePayment, setStatus, receiptFor,
+    employees, startShift, shifts, currentShift, onShiftEmployee,
+    inventoryReport, creditCollectionReport, uploadCreditSettlement,
+    user: () => load().user,
+    settings: () => load().settings,
+  };
+})(window);
+
+</script>
+  <script>
+/* ============================================================
+   LEGO-LAND · Excel / CSV helpers (no external libraries)
+   - Excel export uses SpreadsheetML 2003 (.xls) → opens natively
+     in Excel/LibreOffice/Google Sheets, supports Hebrew + RTL +
+     multiple worksheets + numeric cells.
+   ============================================================ */
+(function (global) {
+  'use strict';
+
+  const esc = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+  const isNum = (v) => typeof v === 'number' && isFinite(v);
+
+  function cell(v) {
+    if (isNum(v)) return `<Cell><Data ss:Type="Number">${v}</Data></Cell>`;
+    return `<Cell><Data ss:Type="String">${esc(v)}</Data></Cell>`;
+  }
+  function headCell(v) {
+    return `<Cell ss:StyleID="hd"><Data ss:Type="String">${esc(v)}</Data></Cell>`;
+  }
+
+  /* sheets: [{ name, headers:[...], rows:[[...],[...]] }] */
+  function toWorkbookXML(sheets) {
+    const ws = sheets.map((sh) => {
+      const head = `<Row>${(sh.headers || []).map(headCell).join('')}</Row>`;
+      const body = (sh.rows || []).map(r => `<Row>${r.map(cell).join('')}</Row>`).join('');
+      return `<Worksheet ss:Name="${esc(sh.name).slice(0,31)}">
+   <Table>${head}${body}</Table>
+   <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><DisplayRightToLeft/></WorksheetOptions>
+  </Worksheet>`;
+    }).join('');
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="hd"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#0057A8" ss:Pattern="Solid"/></Style>
+ </Styles>
+ ${ws}
+</Workbook>`;
+  }
+
+  function download(filename, content, mime) {
+    const blob = new Blob(['﻿', content], { type: mime || 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  function exportExcel(filename, sheets) {
+    download(filename.replace(/\.(xlsx?|csv)$/i, '') + '.xls',
+      toWorkbookXML(sheets), 'application/vnd.ms-excel');
+  }
+
+  // ---- CSV ----------------------------------------------------------
+  function exportCSV(filename, headers, rows) {
+    const q = (v) => {
+      const s = String(v == null ? '' : v);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    const lines = [headers.map(q).join(',')].concat(rows.map(r => r.map(q).join(',')));
+    download(filename.replace(/\.\w+$/, '') + '.csv', lines.join('\r\n'), 'text/csv;charset=utf-8');
+  }
+
+  /* Robust-enough CSV parser (handles quotes, commas, CRLF). Returns array of arrays. */
+  function parseCSV(text) {
+    const rows = []; let row = [], field = '', i = 0, q = false;
+    text = text.replace(/^﻿/, '');
+    while (i < text.length) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+        else field += c;
+      } else {
+        if (c === '"') q = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c === '\r') { /* skip */ }
+        else field += c;
+      }
+      i++;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.length && r.some(x => String(x).trim() !== ''));
+  }
+
+  /* Parse free-text/pasted inventory list.
+     Accepts CSV/TSV/space with header detection. Columns by name or position:
+     sku, name, barcode, price, qty  */
+  function parseInventoryText(text) {
+    const raw = text.trim();
+    if (!raw) return [];
+    // detect delimiter
+    const firstLine = raw.split(/\r?\n/)[0];
+    const delim = firstLine.includes('\t') ? '\t' : firstLine.includes(',') ? ',' : /\s{2,}/.test(firstLine) ? null : ',';
+    const splitLine = (l) => delim === null ? l.trim().split(/\s{2,}|\t/) : l.split(delim);
+
+    let lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    let header = null;
+    const probe = splitLine(lines[0]).map(s => s.trim().toLowerCase());
+    const known = ['sku', 'מק"ט', "מקט", 'name', 'שם', 'barcode', 'ברקוד', 'price', 'מחיר', 'qty', 'quantity', 'כמות'];
+    if (probe.some(p => known.includes(p))) { header = probe; lines = lines.slice(1); }
+
+    const idx = (names) => header ? header.findIndex(h => names.includes(h)) : -1;
+    const iSku = idx(['sku', 'מק"ט', 'מקט']);
+    const iName = idx(['name', 'שם']);
+    const iBar = idx(['barcode', 'ברקוד']);
+    const iPrice = idx(['price', 'מחיר']);
+    const iQty = idx(['qty', 'quantity', 'כמות']);
+
+    return lines.map((l) => {
+      const c = splitLine(l).map(s => s.trim());
+      if (header) {
+        return {
+          sku: c[iSku] || '', name: iName >= 0 ? c[iName] : '',
+          barcode: iBar >= 0 ? c[iBar] : '', price: iPrice >= 0 ? +c[iPrice] || 0 : 0,
+          qty: iQty >= 0 ? +c[iQty] || 0 : 0,
+        };
+      }
+      // positional: sku, qty   OR   sku, name, barcode, price, qty
+      if (c.length <= 2) return { sku: c[0], qty: +c[1] || 0 };
+      return { sku: c[0], name: c[1] || '', barcode: c[2] || '', price: +c[3] || 0, qty: +c[4] || 0 };
+    }).filter(r => r.sku);
+  }
+
+  global.XL = { exportExcel, exportCSV, parseCSV, parseInventoryText, download };
+})(window);
+
+</script>
+  <script>
+/* ============================================================
+   LEGO-LAND · App / UI
+   ============================================================ */
+(function () {
+  'use strict';
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const S  = DB.STATUS;
+
+  // ---- helpers ------------------------------------------------------
+  const pad = (n) => String(n).padStart(2, '0');
+  const nis = (n) => '₪' + (Math.round(n * 100) / 100).toLocaleString('he-IL');
+  const dt  = (iso) => iso ? new Date(iso).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-';
+
+  function elapsed(iso) {
+    if (!iso) return { txt: '-', cls: '' };
+    let s = Math.max(0, Math.floor((Date.now() - new Date(iso)) / 1000));
+    const h = Math.floor(s / 3600); s -= h * 3600;
+    const m = Math.floor(s / 60); s -= m * 60;
+    const txt = h > 0 ? `${h}ש ${pad(m)}ד` : m > 0 ? `${m}:${pad(s)} דק׳` : `${s} שנ׳`;
+    const mins = (Date.now() - new Date(iso)) / 60000;
+    const cls = mins > 180 ? 'elapsed--bad' : mins > 60 ? 'elapsed--warn' : '';
+    return { txt, cls };
+  }
+  const chip = (st) => `<span class="chip chip--${S[st].chip}">${S[st].label}</span>`;
+  const itemName = (sku) => (DB.items().find(i => i.sku === sku) || {}).name || sku;
+  const linesText = (o) => o.lines.map(l => `${itemName(l.sku)}×${l.qty}`).join('، ');
+  const orderTotal = (o) => o.lines.reduce((s, l) => s + (l.price != null ? l.price : (DB.items().find(i => i.sku === l.sku) || {}).price || 0) * l.qty, 0);
+
+  function toast(msg) {
+    const t = $('#toast'); t.textContent = msg; t.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2600);
+  }
+
+  // ---- modal --------------------------------------------------------
+  function openModal(title, html) {
+    $('#modalTitle').textContent = title;
+    $('#modalBody').innerHTML = html;
+    $('#modal').hidden = false;
+  }
+  function closeModal() { $('#modal').hidden = true; }
+  $('#modal').addEventListener('click', (e) => { if (e.target.matches('[data-close]')) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  // ============================================================
+  //  HOME DASHBOARD (live)
+  // ============================================================
+  function renderKPIs() {
+    const orders = DB.orders();
+    const inProc = DB.ordersInProcess();
+    const items = DB.items();
+    const low = items.filter(i => i.qty <= (DB.settings().lowStock || 5)).length;
+    const todaySales = orders.filter(o => o.creditTxn).reduce((s, o) => s + o.creditTxn.amount, 0);
+    $('#kpis').innerHTML = `
+      <div class="kpi kpi--a"><h4>הזמנות בתהליך</h4><div class="v">${inProc.length}</div></div>
+      <div class="kpi kpi--b"><h4>מכירות מאושרות</h4><div class="v">${nis(todaySales)}</div></div>
+      <div class="kpi kpi--c"><h4>פריטים במלאי</h4><div class="v">${items.reduce((s, i) => s + i.qty, 0)}</div></div>
+      <div class="kpi kpi--d"><h4>פריטים במלאי נמוך</h4><div class="v">${low}</div></div>`;
+  }
+
+  function renderLiveOrders() {
+    const rows = DB.ordersInProcess().map((o) => {
+      const e = elapsed(o.paymentApprovedAt);
+      return `<tr>
+        <td class="num">${o.id}</td>
+        <td>${o.customer}</td>
+        <td>${linesText(o)}</td>
+        <td>${chip(o.status)}</td>
+        <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${e.txt}</span></td>
+        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
+      </tr>`;
+    }).join('');
+    $('#liveOrdersTbl tbody').innerHTML = rows || `<tr><td colspan="6" class="empty">אין הזמנות פעילות כרגע</td></tr>`;
+  }
+
+  function renderLiveStock() {
+    const low = DB.settings().lowStock || 5;
+    const rows = DB.items().sort((a, b) => a.qty - b.qty).map((it) => {
+      const lowCls = it.qty <= low ? 'chip chip--low' : 'chip chip--ok';
+      return `<tr>
+        <td>${it.name}</td>
+        <td class="num">${it.sku}</td>
+        <td>${it.barcode || '-'}</td>
+        <td><span class="${lowCls}">${it.qty}</span></td>
+        <td class="num">${DB.reserved(it.sku)}</td>
+      </tr>`;
+    }).join('');
+    $('#liveStockTbl tbody').innerHTML = rows;
+    $('#stockUpdated').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL');
+  }
+
+  function renderHome() {
+    $('#greetUser').textContent = DB.user().name;
+    renderKPIs(); renderLiveOrders(); renderLiveStock();
+  }
+
+  // tick: update only elapsed counters + clock every second (cheap)
+  function tick() {
+    $('#liveClock').textContent = new Date().toLocaleTimeString('he-IL');
+    $$('[data-elapsed]').forEach((el) => {
+      const iso = el.getAttribute('data-elapsed'); if (!iso) return;
+      const e = elapsed(iso); el.textContent = e.txt;
+      el.className = 'elapsed ' + e.cls;
+    });
+  }
+
+  // ============================================================
+  //  VIEW: INVENTORY (עדכון מלאי)
+  // ============================================================
+  function viewInventory() {
+    const items = DB.items();
+    const tbl = items.map(it => `<tr>
+      <td>${it.name}</td><td class="num">${it.sku}</td><td>${it.barcode || '-'}</td>
+      <td class="num">${nis(it.price)}</td><td class="num">${it.qty}</td></tr>`).join('');
+
+    openModal('עדכון מלאי', `
+      <div class="hint">העלה רשימת פריטים למכירה - כמות לכל פריט. אפשר להדביק טקסט/CSV, או לטעון קובץ.
+      עמודות נתמכות: <b>sku, name, barcode, price, qty</b> (גם בעברית: מק"ט, שם, ברקוד, מחיר, כמות).
+      פורמט מהיר: <code>מק"ט,כמות</code> בכל שורה.</div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>הדבקת רשימת פריטים</label>
+          <textarea id="invText" class="mono" placeholder="LG-10311,10&#10;LG-42143,5"></textarea>
+        </div>
+        <div>
+          <div class="field"><label>טעינת קובץ CSV</label><input type="file" id="invFile" accept=".csv,.txt"></div>
+          <div class="field"><label>אופן עדכון</label>
+            <select id="invMode">
+              <option value="add">הוספה לכמות הקיימת (תנועת כניסה)</option>
+              <option value="set">קביעת כמות מדויקת (ספירת מלאי)</option>
+            </select>
+          </div>
+          <div class="field"><label>הערה לתנועה</label><input id="invNote" placeholder="קליטת משלוח מספק / ספירה"></div>
+          <div class="actions">
+            <button class="btn btn--ok" id="invApply">עדכן מלאי</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin:14px 0">
+        <button class="btn" id="invXls">⬇ דוח תנועות ויתרות מלאי (Excel)</button>
+        <button class="btn btn--line" id="invCsv">⬇ ייצוא יתרות (CSV)</button>
+      </div>
+
+      <h4>מלאי נוכחי</h4>
+      <div class="table-wrap"><table class="tbl"><thead>
+        <tr><th>פריט</th><th>מק"ט</th><th>ברקוד</th><th>מחיר</th><th>יתרה</th></tr>
+        </thead><tbody>${tbl}</tbody></table></div>
+    `);
+
+    $('#invFile').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => { $('#invText').value = r.result; toast('הקובץ נטען - בדוק ולחץ "עדכן מלאי"'); };
+      r.readAsText(f, 'utf-8');
+    });
+
+    $('#invApply').addEventListener('click', () => {
+      const rows = XL.parseInventoryText($('#invText').value);
+      if (!rows.length) { toast('לא זוהו שורות תקינות'); return; }
+      const mode = $('#invMode').value;
+      rows.forEach(r => r.mode = mode);
+      const res = DB.applyInventoryList(rows, $('#invNote').value.trim());
+      toast(`עודכנו ${res.movements} תנועות · ${res.created} פריטים חדשים · שינוי נטו ${res.added > 0 ? '+' : ''}${res.added}`);
+      viewInventory();
+    });
+
+    $('#invXls').addEventListener('click', exportInventoryExcel);
+    $('#invCsv').addEventListener('click', () => {
+      XL.exportCSV('יתרות_מלאי', ['מק"ט', 'שם', 'ברקוד', 'מחיר', 'יתרה', 'שמור'],
+        DB.items().map(i => [i.sku, i.name, i.barcode, i.price, i.qty, DB.reserved(i.sku)]));
+    });
+  }
+
+  function exportInventoryExcel() {
+    const balances = {
+      name: 'יתרות מלאי',
+      headers: ['מק"ט', 'שם פריט', 'ברקוד', 'מחיר', 'יתרה זמינה', 'שמור להזמנות', 'סה"כ נכנס', 'סה"כ יצא'],
+      rows: DB.inventoryReport().map(r => [r.sku, r.name, r.barcode, r.price, r.balance, r.reserved, r.totalIn, r.totalOut]),
+    };
+    const moves = {
+      name: 'תנועות מלאי',
+      headers: ['תאריך', 'מק"ט', 'שם', 'סוג', 'כמות', 'יתרה אחרי', 'סיבה', 'אסמכתא'],
+      rows: DB.movements().map(m => [dt(m.ts), m.sku, itemName(m.sku), m.type === 'in' ? 'כניסה' : 'יציאה', m.qty, m.balanceAfter, m.reason, m.ref]),
+    };
+    XL.exportExcel('דוח_תנועות_ויתרות_מלאי', [balances, moves]);
+    toast('הדוח הופק לאקסל');
+  }
+
+  // ============================================================
+  //  VIEW: ORDERS (מצב הזמנות) - live
+  // ============================================================
+  const NEXT = { approved: 'packing', packing: 'packed', packed: 'shipping', shipping: 'shipped', shipped: 'delivered' };
+  function viewOrders() {
+    const rows = DB.orders().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((o) => {
+      const e = elapsed(o.paymentApprovedAt);
+      const skus = o.lines.map(l => {
+        const av = (DB.items().find(i => i.sku === l.sku) || {}).qty;
+        return `${l.sku} (כ:${l.qty} · זמין:${av != null ? av : '-'})`;
+      }).join('<br>');
+      let act = '';
+      if (o.status === 'new') act = `<button class="btn btn--tiny btn--ok" data-approve="${o.id}">אשר תשלום</button>`;
+      else if (NEXT[o.status]) act = `<button class="btn btn--tiny" data-next="${o.id}">→ ${S[NEXT[o.status]].label}</button>`;
+      return `<tr>
+        <td class="num">${o.id}</td>
+        <td>${o.customer}</td>
+        <td style="white-space:normal">${skus}</td>
+        <td>${chip(o.status)}</td>
+        <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${o.paymentApprovedAt ? e.txt : 'טרם אושר'}</span></td>
+        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
+        <td>${act}</td>
+      </tr>`;
+    }).join('');
+
+    openModal('מצב הזמנות - לייב', `
+      <div class="hint">סטטוס וזמן מאישור התשלום מתעדכנים בזמן אמת. לכל פריט מוצגים מק"ט, כמות בהזמנה וכמות זמינה במלאי.</div>
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>הזמנה</th><th>לקוח</th><th>פריטים (מק"ט · כמות · זמין)</th><th>סטטוס</th>
+        <th>זמן מאישור</th><th>קבלה</th><th>פעולה</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+    `);
+  }
+
+  // ============================================================
+  //  VIEW: PACKING (אריזה)
+  // ============================================================
+  function viewPacking() {
+    const emps = DB.employees();
+    const active = DB.currentShift();
+    const current = packing._emp || DB.onShiftEmployee() || emps[0];
+    const queue = DB.orders().filter(o => o.status === 'approved' || o.status === 'packing');
+
+    const shiftCards = DB.shifts().map(s => {
+      const on = active && active.id === s.id;
+      return `<div class="kpi ${on ? 'kpi--b' : ''}" style="border-inline-start-color:${on ? 'var(--green)' : 'var(--line)'}">
+        <h4>${s.name} ${on ? '· <span style="color:var(--green)">פעילה כעת</span>' : ''}</h4>
+        <div class="v" style="font-size:1.05rem">${s.empName}</div>
+        <div class="muted">${s.from}-${s.to} · עובד ${s.empNo}</div></div>`;
+    }).join('');
+    const rows = queue.map((o) => {
+      const e = elapsed(o.paymentApprovedAt);
+      return `<tr>
+        <td class="num">${o.id}</td><td>${o.customer}</td>
+        <td style="white-space:normal">${linesText(o)}</td>
+        <td>${chip(o.status)}</td>
+        <td><span class="elapsed ${e.cls}" data-elapsed="${o.paymentApprovedAt || ''}">${e.txt}</span></td>
+        <td><button class="btn btn--tiny btn--ok" data-pack="${o.id}">ארוז והדפס מדבקה</button></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="6" class="empty">אין הזמנות לאריזה</td></tr>`;
+
+    const opts = emps.map(e => `<option value="${e.empNo}" ${current && e.empNo === current.empNo ? 'selected' : ''}>${e.empNo} · ${e.name}${e.shift ? ' (' + (DB.shifts().find(s=>s.id===e.shift)||{}).name + ')' : ''}</option>`).join('');
+    const shiftOpts = DB.shifts().map(s => `<option value="${s.id}" ${active && active.id === s.id ? 'selected' : ''}>${s.name} (${s.from}-${s.to})</option>`).join('');
+
+    openModal('אריזה - משמרת', `
+      <h4>לוח משמרות</h4>
+      <div class="kpis" style="padding:0 0 12px">${shiftCards}</div>
+      ${!active ? '<div class="hint">כרגע מחוץ לשעות המשמרת (08:00-18:00). אפשר עדיין לבחור אורז ידנית.</div>' : ''}
+      <div class="grid3">
+        <div class="field"><label>מספר עובד</label><input id="pkEmpNo" placeholder="A-201"></div>
+        <div class="field"><label>שם עובד</label><input id="pkEmpName" placeholder="שם מלא"></div>
+        <div class="field"><label>משמרת</label><select id="pkShiftSel">${shiftOpts}</select></div>
+      </div>
+      <div class="field"><label>או בחר עובד פעיל</label><select id="pkEmpSel">${opts}</select></div>
+      <div class="actions"><button class="btn" id="pkShift">כניסה למשמרת</button>
+        <span class="muted" id="pkActive">${current ? `אורז פעיל: ${current.empNo} · ${current.name} · מתחילת המשמרת ${elapsed(current.shiftStart).txt}` : 'לא נבחר אורז'}</span></div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
+      <div class="hint">בעת אריזה מודפסת מדבקה הנושאת את <b>קוד האורז</b> (לטיפול בתלונות), מספר הזמנה, וזמן מאז אישור התשלום.</div>
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>הזמנה</th><th>לקוח</th><th>פריטים</th><th>סטטוס</th><th>זמן מאישור</th><th>פעולה</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+    `);
+
+    $('#pkEmpSel').addEventListener('change', (e) => {
+      const emp = DB.employees().find(x => x.empNo === e.target.value);
+      packing._emp = emp; viewPacking();
+    });
+    $('#pkShift').addEventListener('click', () => {
+      const no = $('#pkEmpNo').value.trim(), nm = $('#pkEmpName').value.trim();
+      const sh = $('#pkShiftSel').value;
+      if (!no) { toast('הזן מספר עובד'); return; }
+      packing._emp = DB.startShift(no, nm, sh);
+      toast(`${packing._emp.name} נכנס/ה ל${(DB.shifts().find(s=>s.id===sh)||{}).name || 'משמרת'}`); viewPacking();
+    });
+  }
+  function packing() { viewPacking(); }
+
+  function packOrder(orderId) {
+    const emp = packing._emp || DB.onShiftEmployee() || DB.employees()[0];
+    if (!emp) { toast('בחר אורז למשמרת'); return; }
+    const shiftName = emp.shift ? (DB.shifts().find(s => s.id === emp.shift) || {}).name : '';
+    DB.setStatus(orderId, 'packing', { packedBy: emp });
+    const o = DB.setStatus(orderId, 'packed', { packedBy: emp });
+    const code = `${emp.empNo}-${o.id.replace('ORD-', '')}`;
+    const e = elapsed(o.paymentApprovedAt);
+    openModal('מדבקת אריזה', `
+      <div class="sticker">
+        <h4>📦 LEGO-LAND · מדבקת אריזה</h4>
+        <div class="row"><span>הזמנה</span><b>${o.id}</b></div>
+        <div class="row"><span>לקוח</span><b>${o.customer}</b></div>
+        <div class="row"><span>פריטים</span><b>${linesText(o)}</b></div>
+        <div class="row"><span>קוד אורז</span><b>${code}</b></div>
+        <div class="row"><span>אורז</span><b>${emp.empNo} · ${emp.name}</b></div>
+        ${shiftName ? `<div class="row"><span>משמרת</span><b>${shiftName}</b></div>` : ''}
+        <div class="row"><span>זמן מאישור תשלום</span><b>${e.txt}</b></div>
+        <div class="row"><span>נארז ב־</span><b>${dt(o.packedAt)}</b></div>
+        <div class="bc">*${code}*</div>
+        <div class="row" style="border:none"><span>כתובת</span><b>${o.address}</b></div>
+      </div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn" onclick="window.print()">🖨 הדפסה</button>
+        <button class="btn btn--line" data-close>סגירה</button>
+      </div>`);
+    toast(`הזמנה ${o.id} נארזה ע"י ${emp.name}`);
+  }
+
+  // ============================================================
+  //  VIEW: SHIPPING (משלוח)
+  // ============================================================
+  function viewShipping() {
+    const queue = DB.orders().filter(o => ['packed', 'shipping', 'shipped'].includes(o.status));
+    const rows = queue.map((o) => {
+      const ref = o.shippedAt || o.packedAt || o.paymentApprovedAt;
+      const e = elapsed(ref);
+      let act = '';
+      if (o.status === 'packed') act = `<button class="btn btn--tiny btn--ok" data-ship="${o.id}">שלח והפק קבלה</button>`;
+      else if (o.status === 'shipping') act = `<button class="btn btn--tiny" data-next="${o.id}">→ נשלח</button>`;
+      else act = `<button class="btn btn--tiny btn--line" data-next="${o.id}">→ נמסר</button>`;
+      return `<tr>
+        <td class="num">${o.id}</td><td>${o.customer}</td>
+        <td style="white-space:normal">${o.address}<br><span class="muted">${o.phone || ''} · ${o.courier}</span></td>
+        <td>${chip(o.status)}</td>
+        <td>${o.tracking || '-'}</td>
+        <td><span class="elapsed ${e.cls}" data-elapsed="${ref || ''}">${e.txt}</span></td>
+        <td>${o.receiptNo ? `<button class="btn btn--tiny btn--line" data-receipt="${o.id}">${o.receiptNo}</button>` : '-'}</td>
+        <td>${act}</td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="8" class="empty">אין משלוחים כעת</td></tr>`;
+
+    openModal('משלוח - מערך הובלה', `
+      <div class="hint">ניהול מערך ההובלה למזמין: כתובת, מוביל, מספר מעקב, וזמן מאז שההזמנה מוכנה למשלוח. הפקת קבלה מתבצעת ברגע שההזמנה יוצאת ללקוח.</div>
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>הזמנה</th><th>לקוח</th><th>כתובת ומוביל</th><th>סטטוס</th><th>מעקב</th>
+        <th>זמן מההכנה</th><th>קבלה</th><th>פעולה</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+    `);
+  }
+
+  function showReceipt(orderId) {
+    const r = DB.receiptFor(orderId);
+    if (!r || !r.no) { toast('קבלה תופק עם יציאת המשלוח'); return; }
+    openModal('קבלה ' + r.no, `
+      <div class="receipt">
+        <h3>LEGO-LAND</h3>
+        <div class="muted" style="text-align:center">קבלה / חשבונית מס · ${r.no}</div>
+        <div class="ln"><span>תאריך</span><span>${dt(r.date)}</span></div>
+        <div class="ln"><span>הזמנה</span><span>${r.order.id}</span></div>
+        <div class="ln"><span>לקוח</span><span>${r.order.customer}</span></div>
+        <div class="ln"><span>אמצעי תשלום</span><span>${r.order.creditTxn ? r.order.creditTxn.card + ' •••• ' + r.order.creditTxn.last4 : '-'}</span></div>
+        <div style="margin:8px 0;border-top:1px dashed #bbb"></div>
+        ${r.lines.map(l => `<div class="ln"><span>${l.name} ×${l.qty}</span><span>${nis(l.total)}</span></div>`).join('')}
+        <div class="ln total"><span>סה"כ לתשלום</span><span>${nis(r.total)}</span></div>
+        <div class="muted" style="text-align:center;margin-top:8px">תודה שקנית ב-LEGO-LAND 🧱</div>
+      </div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn" onclick="window.print()">🖨 הדפסה</button>
+        <button class="btn btn--line" data-close>סגירה</button>
+      </div>`);
+  }
+
+  // ============================================================
+  //  VIEW: REPORTS (דוחות)
+  // ============================================================
+  function viewReports(tab) {
+    tab = tab || viewReports._tab || 'inv';
+    viewReports._tab = tab;
+    openModal('דוחות', `
+      <div class="subtabs">
+        <button class="subtab ${tab === 'inv' ? 'is-on' : ''}" data-rtab="inv">יתרת מלאי לפי פריט</button>
+        <button class="subtab ${tab === 'credit' ? 'is-on' : ''}" data-rtab="credit">גביה אשראי</button>
+      </div>
+      <div id="repBody"></div>
+    `);
+    tab === 'inv' ? renderInvReport() : renderCreditReport();
+  }
+
+  function renderInvReport() {
+    const rep = DB.inventoryReport();
+    const rows = rep.map((r) => `
+      <tr data-drill="${r.sku}" style="cursor:pointer">
+        <td>▸ ${r.name}</td><td class="num">${r.sku}</td><td>${r.barcode || '-'}</td>
+        <td class="num">${r.balance}</td><td class="num">${r.soldUnits}</td><td class="num">${nis(r.soldAmount)}</td>
+      </tr>
+      <tr class="drill" id="drill-${r.sku}" hidden><td colspan="6">
+        ${r.sales.length ? `<table class="tbl" style="min-width:auto"><thead><tr>
+          <th>הזמנה</th><th>אסמכתת עסקה</th><th>תאריך</th><th>כמות</th><th>מחיר</th><th>סכום עסקה</th><th>אשראי</th></tr></thead>
+          <tbody>${r.sales.map(s => `<tr><td>${s.orderId}</td><td>${s.txnId}</td><td>${dt(s.date)}</td>
+            <td class="num">${s.qty}</td><td class="num">${nis(s.price)}</td><td class="num">${nis(s.amount)}</td><td>${s.card}</td></tr>`).join('')}</tbody></table>`
+          : '<div class="empty">אין מכירות מאושרות לפריט זה</div>'}
+      </td></tr>`).join('');
+
+    $('#repBody').innerHTML = `
+      <div class="hint">לחיצה על פריט פותחת דריל-דאון למכירות לפי עסקאות שאושרו ע"י חברת האשראי.</div>
+      <div class="actions" style="margin-bottom:12px">
+        <button class="btn" id="repInvXls">⬇ ייצוא לאקסל</button>
+      </div>
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>פריט</th><th>מק"ט</th><th>ברקוד</th><th>יתרה</th><th>נמכר (יח')</th><th>מכירות (₪)</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+
+    $$('#repBody [data-drill]').forEach(tr => tr.addEventListener('click', () => {
+      const d = $('#drill-' + tr.getAttribute('data-drill')); d.hidden = !d.hidden;
+    }));
+    $('#repInvXls').addEventListener('click', () => {
+      const balances = { name: 'יתרת מלאי לפי פריט',
+        headers: ['מק"ט', 'שם', 'ברקוד', 'יתרה', 'נמכר יח׳', 'מכירות ₪'],
+        rows: rep.map(r => [r.sku, r.name, r.barcode, r.balance, r.soldUnits, r.soldAmount]) };
+      const sales = { name: 'מכירות לפי עסקה',
+        headers: ['מק"ט', 'שם', 'הזמנה', 'עסקת אשראי', 'תאריך', 'כמות', 'מחיר', 'סכום', 'אשראי'],
+        rows: rep.flatMap(r => r.sales.map(s => [r.sku, r.name, s.orderId, s.txnId, dt(s.date), s.qty, s.price, s.amount, s.card])) };
+      XL.exportExcel('דוח_מלאי_ומכירות', [balances, sales]);
+      toast('הדוח הופק לאקסל');
+    });
+  }
+
+  function renderCreditReport() {
+    const today = new Date().toISOString().slice(0, 10);
+    const monthAgo = new Date(Date.now() - 35 * 86400000).toISOString().slice(0, 10);
+    $('#repBody').innerHTML = `
+      <div class="hint">דוח גביה אשראי תקופתי לפי תאריכים. לביצוע התאמה - טען את דוח הגביה שמתקבל מחברת האשראי (ברמת עסקה),
+      והמערכת תסמן כל אי-התאמה בין דוח המכירות לדוח הגביה.<br>
+      פורמט קובץ ההתאמה: עמודות <b>txnId, amount</b> (אופ' <b>date, ref</b>).</div>
+      <div class="grid3">
+        <div class="field"><label>מתאריך</label><input type="date" id="repFrom" value="${monthAgo}"></div>
+        <div class="field"><label>עד תאריך</label><input type="date" id="repTo" value="${today}"></div>
+        <div class="field"><label>טעינת דוח גביה מחברת האשראי</label><input type="file" id="repSettle" accept=".csv,.txt"></div>
+      </div>
+      <div class="actions" style="margin-bottom:12px">
+        <button class="btn" id="repRun">הצג דוח והתאמה</button>
+        <button class="btn btn--line" id="repCreditXls">⬇ ייצוא לאקסל</button>
+        <span class="muted" id="repSettleInfo"></span>
+      </div>
+      <div id="reconOut"></div>`;
+
+    $('#repSettle').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        const rows = XL.parseCSV(r.result);
+        let head = rows[0].map(h => h.trim().toLowerCase());
+        const has = head.includes('txnid') || head.includes('amount');
+        const body = has ? rows.slice(1) : rows;
+        const iT = has ? head.indexOf('txnid') : 0;
+        const iA = has ? head.indexOf('amount') : 1;
+        const iD = has ? head.indexOf('date') : 2;
+        const iR = has ? head.indexOf('ref') : 3;
+        const parsed = body.map(c => ({ txnId: (c[iT] || '').trim(), amount: +c[iA] || 0, date: iD >= 0 ? c[iD] : '', ref: iR >= 0 ? c[iR] : '' })).filter(x => x.txnId);
+        const n = DB.uploadCreditSettlement(parsed);
+        $('#repSettleInfo').textContent = `נטענו ${n} שורות גביה`;
+        toast(`דוח גביה נטען (${n} עסקאות)`);
+        runRecon();
+      };
+      r.readAsText(f, 'utf-8');
+    });
+    $('#repRun').addEventListener('click', runRecon);
+    $('#repCreditXls').addEventListener('click', exportCreditExcel);
+    runRecon();
+  }
+
+  function runRecon() {
+    const from = $('#repFrom').value, to = $('#repTo').value;
+    const R = DB.creditCollectionReport(from, to);
+    const cls = (m) => m === 'match' ? 'matchok' : 'miss';
+    const lbl = { match: '✔ תואם', amount: '≠ פער סכום', missing: '✘ חסר בגביה', orphan: '⚠ אין מכירה' };
+
+    const reconRows = R.recon.map(r => `<tr class="${cls(r.match)}">
+      <td>${r.orderId}</td><td>${r.txnId}</td><td>${dt(r.date)}</td><td>${r.customer}</td>
+      <td class="num">${nis(r.amount)}</td>
+      <td class="num">${r.collected != null ? nis(r.collected) : '-'}</td>
+      <td class="num">${r.diff != null ? (r.diff === 0 ? '0' : nis(r.diff)) : '-'}</td>
+      <td><span class="chip ${r.match === 'match' ? 'chip--ok' : 'chip--low'}">${lbl[r.match]}</span></td></tr>`).join('');
+    const orphanRows = R.orphan.map(r => `<tr class="miss">
+      <td>-</td><td>${r.txnId}</td><td>${dt(r.date)}</td><td>-</td><td class="num">-</td>
+      <td class="num">${nis(r.collected)}</td><td class="num">-</td>
+      <td><span class="chip chip--low">${lbl.orphan}</span></td></tr>`).join('');
+
+    $('#reconOut').innerHTML = `
+      <div class="kpis" style="padding:0 0 12px">
+        <div class="kpi kpi--d"><h4>עסקאות מכירה</h4><div class="v">${R.totals.salesCount}</div></div>
+        <div class="kpi kpi--b"><h4>סה"כ מכירות</h4><div class="v">${nis(R.totals.salesAmount)}</div></div>
+        <div class="kpi kpi--c"><h4>סה"כ נגבה</h4><div class="v">${nis(R.totals.collectedAmount)}</div></div>
+        <div class="kpi kpi--a"><h4>אי-התאמות</h4><div class="v">${R.totals.mismatches}</div></div>
+      </div>
+      ${!R.hasSettlement ? '<div class="hint">לא נטען דוח גביה מחברת האשראי - מוצג דוח המכירות בלבד. טען קובץ לביצוע התאמה.</div>' : ''}
+      <div class="table-wrap"><table class="tbl"><thead><tr>
+        <th>הזמנה</th><th>עסקה</th><th>תאריך</th><th>לקוח</th><th>סכום מכירה</th><th>סכום גביה</th><th>פער</th><th>התאמה</th>
+        </tr></thead><tbody>${reconRows}${orphanRows || ''}</tbody></table></div>`;
+  }
+
+  function exportCreditExcel() {
+    const R = DB.creditCollectionReport($('#repFrom').value, $('#repTo').value);
+    const lbl = { match: 'תואם', amount: 'פער סכום', missing: 'חסר בגביה', orphan: 'אין מכירה' };
+    const sheet = { name: 'גביה אשראי - התאמה',
+      headers: ['הזמנה', 'עסקה', 'תאריך', 'לקוח', 'סכום מכירה', 'סכום גביה', 'פער', 'תוצאה'],
+      rows: R.recon.map(r => [r.orderId, r.txnId, dt(r.date), r.customer, r.amount, r.collected != null ? r.collected : '', r.diff != null ? r.diff : '', lbl[r.match]])
+        .concat(R.orphan.map(r => ['', r.txnId, dt(r.date), '', '', r.collected, '', lbl.orphan])) };
+    XL.exportExcel('דוח_גביה_אשראי', [sheet]);
+    toast('דוח הגביה הופק לאקסל');
+  }
+
+  // ============================================================
+  //  VIEW: ORDER LINK (לינק הזמנה)
+  // ============================================================
+  function viewOrderLink() {
+    const opts = DB.items().map(i => `<option value="${i.sku}">${i.name} - ${i.sku} (זמין ${i.qty})</option>`).join('');
+    openModal('לינק הזמנה - קליטת הזמנה חדשה', `
+      <div class="hint">קליטת הזמנה המקושרת ישירות למלאי. עם אישור התשלום הכמות נגרעת אוטומטית מהמלאי ומתחיל מד הזמן.</div>
+      <div class="grid2">
+        <div class="field"><label>שם הלקוח</label><input id="olName"></div>
+        <div class="field"><label>טלפון</label><input id="olPhone"></div>
+      </div>
+      <div class="field"><label>כתובת למשלוח</label><input id="olAddr"></div>
+      <div class="field"><label>מוביל</label>
+        <select id="olCourier"><option>דואר שליחים</option><option>צ'יטה</option><option>איסוף עצמי</option></select></div>
+      <h4>פריטים</h4>
+      <div id="olLines"></div>
+      <div class="actions"><button class="btn btn--line btn--tiny" id="olAdd">+ הוסף פריט</button></div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn btn--ok" id="olCreate">צור הזמנה</button>
+        <button class="btn" id="olCreatePay">צור ואשר תשלום</button>
+      </div>
+      <template id="olRowTpl">
+        <div class="grid2 olrow" style="align-items:end">
+          <div class="field"><label>פריט</label><select class="olSku">${opts}</select></div>
+          <div class="field"><label>כמות</label><input type="number" class="olQty" value="1" min="1"></div>
+        </div>
+      </template>
+    `);
+    const addRow = () => { const t = $('#olRowTpl').content.cloneNode(true); $('#olLines').appendChild(t); };
+    addRow();
+    $('#olAdd').addEventListener('click', addRow);
+
+    const collect = () => {
+      const lines = $$('#olLines .olrow').map(r => ({ sku: $('.olSku', r).value, qty: +$('.olQty', r).value || 0 })).filter(l => l.qty > 0);
+      const name = $('#olName').value.trim() || 'לקוח אנונימי';
+      if (!lines.length) { toast('הוסף לפחות פריט אחד'); return null; }
+      return DB.createOrder({ customer: name, phone: $('#olPhone').value.trim(), address: $('#olAddr').value.trim() || '-', courier: $('#olCourier').value, lines });
+    };
+    $('#olCreate').addEventListener('click', () => { const o = collect(); if (o) { toast('נוצרה הזמנה ' + o.id); closeModal(); } });
+    $('#olCreatePay').addEventListener('click', () => {
+      const o = collect(); if (!o) return;
+      try { DB.approvePayment(o.id, 'ויזה'); toast('הזמנה ' + o.id + ' נוצרה והתשלום אושר'); closeModal(); }
+      catch (e) { toast(e.message); }
+    });
+  }
+
+  // ============================================================
+  //  Global click delegation for dynamic action buttons
+  // ============================================================
+  document.body.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-approve],[data-next],[data-pack],[data-ship],[data-receipt]');
+    if (!t) return;
+    if (t.dataset.approve) { try { DB.approvePayment(t.dataset.approve); toast('התשלום אושר · המלאי עודכן'); } catch (err) { toast(err.message); } refreshOpenView(); }
+    else if (t.dataset.next) { const o = DB.orders().find(x => x.id === t.dataset.next); DB.setStatus(o.id, NEXT[o.status]); refreshOpenView(); }
+    else if (t.dataset.pack) packOrder(t.dataset.pack);
+    else if (t.dataset.ship) { DB.setStatus(t.dataset.ship, 'shipping'); toast('המשלוח יצא · הופקה קבלה'); showReceipt(t.dataset.ship); }
+    else if (t.dataset.receipt) showReceipt(t.dataset.receipt);
+  });
+
+  // re-render whichever modal view is open after a data change
+  let _openView = null;
+  function refreshOpenView() {
+    const map = { inventory: viewInventory, orders: viewOrders, packing: viewPacking, shipping: viewShipping, reports: () => viewReports(), orderlink: viewOrderLink };
+    if (_openView && !$('#modal').hidden && map[_openView]) map[_openView]();
+  }
+
+  // ---- main nav tiles ----------------------------------------------
+  $('#mainNav').addEventListener('click', (e) => {
+    const b = e.target.closest('.tile'); if (!b) return;
+    _openView = b.dataset.view;
+    ({ inventory: viewInventory, orders: viewOrders, packing: viewPacking, shipping: viewShipping, reports: () => viewReports(), orderlink: viewOrderLink })[_openView]();
+  });
+  // sub-tab clicks inside reports
+  document.body.addEventListener('click', (e) => {
+    const s = e.target.closest('[data-rtab]'); if (s) viewReports(s.dataset.rtab);
+  });
+  $('#modal').addEventListener('click', (e) => { if (e.target.matches('[data-close]')) _openView = null; });
+
+  // ---- demo reset --------------------------------------------------
+  $('#resetDemo').addEventListener('click', () => {
+    if (confirm('לאפס את כל הנתונים לנתוני הדגמה?')) { DB.reset(); toast('הנתונים אופסו'); }
+  });
+
+  // ============================================================
+  //  PWA install
+  // ============================================================
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); deferredPrompt = e; $('#installBtn').hidden = false;
+  });
+  $('#installBtn').addEventListener('click', async () => {
+    if (!deferredPrompt) { toast('להתקנה: תפריט הדפדפן ← "הוסף למסך הבית"'); return; }
+    deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; $('#installBtn').hidden = true;
+  });
+  window.addEventListener('appinstalled', () => { $('#installBtn').hidden = true; toast('האפליקציה הותקנה 🎉'); });
+
+  // ============================================================
+  //  Boot + live loop
+  // ============================================================
+  DB.on(() => { try { renderHome(); refreshOpenView(); } catch (e) {} });
+  try {
+    renderHome();
+    tick();
+    setInterval(tick, 1000);
+    setInterval(() => { if ($('#modal').hidden) { renderLiveOrders(); renderLiveStock(); } }, 5000);
+  } catch (e) {
+    if (window.__legoErr) window.__legoErr(e && e.message ? e.message : String(e));
+  }
+})();
+
+</script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+    }
+  </script>
+</body>
+</html>
