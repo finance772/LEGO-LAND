@@ -9,9 +9,9 @@
 
   // Optional delivery-courier companies (order a courier per shipment)
   const COURIERS = [
-    { id: 'gett',  name: 'Gett',       url: 'https://www.gett.com/il/business/delivery/' },
-    { id: 'yango', name: 'Yango',      url: 'https://yango.com/he_il/business/delivery/' },
-    { id: 'wolt',  name: 'Wolt Drive', url: 'https://explore.wolt.com/he/isr/wolt-drive' },
+    { id: 'gett',  name: 'Gett',       url: 'https://www.gett.com/il/business/delivery/',  color: '#111827', fg: '#fff' },
+    { id: 'yango', name: 'Yango',      url: 'https://yango.com/he_il/business/delivery/',   color: '#ff3333', fg: '#fff' },
+    { id: 'wolt',  name: 'Wolt Drive', url: 'https://explore.wolt.com/he/isr/wolt-drive',   color: '#00c2e8', fg: '#06323a' },
   ];
 
   // Real payment (Sumit) checkout page — dynamic-amount payment page
@@ -164,7 +164,7 @@
     const picks = ['LG-10294', 'LG-71043', 'LG-75313', 'LG-42143', 'LG-42115', 'LG-10311', 'LG-21318', 'LG-10497']
       .map(s => DB.items().find(i => i.sku === s)).filter(Boolean);
     el.innerHTML = `
-      <div class="showcase__head"><h3>🧱 סדרות אחרונות במלאי</h3><span class="muted">גלילה →</span></div>
+      <div class="showcase__head"><h3>🧱 סדרות אחרונות במלאי</h3><span class="muted">הסטים הנמכרים ביותר</span></div>
       <div class="showcase__row">
         ${picks.map(it => `<div class="scard">
           <div class="scard__img">
@@ -441,8 +441,11 @@
       if (o.status === 'packed') act = `<button class="btn btn--tiny btn--ok" data-ship="${o.id}">שלח והפק קבלה</button>`;
       else if (o.status === 'shipping') act = `<button class="btn btn--tiny" data-next="${o.id}">→ נשלח</button>`;
       else act = `<button class="btn btn--tiny btn--line" data-next="${o.id}">→ נמסר</button>`;
-      const courierBtns = COURIERS.map(c =>
-        `<button class="btn btn--tiny ${o.courier === c.name ? 'btn--ok' : 'btn--line'}" data-courier="${o.id}" data-co="${c.id}">${c.name}</button>`).join(' ');
+      const courierBtns = COURIERS.map(c => {
+        const sel = o.courier === c.name;
+        return `<button class="btn btn--tiny courier-btn" data-courier="${o.id}" data-co="${c.id}"
+          style="background:${c.color};color:${c.fg};border:2px solid ${sel ? '#16202c' : 'transparent'};box-shadow:${sel ? '0 0 0 2px #16202c33' : 'none'}">${sel ? '✓ ' : ''}${c.name}</button>`;
+      }).join(' ');
       return `<tr>
         <td class="num">${o.id}</td><td>${o.customer}</td>
         <td style="white-space:normal">${o.address}<br><span class="muted">${o.phone || ''}</span></td>

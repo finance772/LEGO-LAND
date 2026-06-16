@@ -54,10 +54,8 @@ button{font-family:inherit;cursor:pointer}
 .showcase{margin:6px 16px 4px}
 .showcase__head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
 .showcase__head h3{font-size:1.1rem}
-.showcase__row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
-.showcase__row::-webkit-scrollbar{height:7px}
-.showcase__row::-webkit-scrollbar-thumb{background:#cfdaea;border-radius:9px}
-.scard{flex:0 0 168px;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;scroll-snap-align:start;border:1px solid var(--line)}
+.showcase__row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.scard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--line)}
 .scard__img{height:120px;position:relative;display:grid;place-items:center;background:linear-gradient(135deg,#0a6fd6,#7b3ff2);overflow:hidden}
 .scard__img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .scard__img .scard__ph{font-size:2.4rem;color:#fff;opacity:0}
@@ -171,3 +169,5 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
 .foot{position:fixed;bottom:0;inset-inline:0;display:flex;align-items:center;justify-content:space-between;
   gap:10px;padding:8px 16px;background:#fff;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted);z-index:20}
 .empty{padding:26px;text-align:center;color:var(--muted)}
+.courier-btn{font-weight:800;margin:2px 0;transition:transform .1s}
+.courier-btn:hover{transform:translateY(-1px)}

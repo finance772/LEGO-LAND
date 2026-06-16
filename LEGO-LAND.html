@@ -73,10 +73,8 @@ button{font-family:inherit;cursor:pointer}
 .showcase{margin:6px 16px 4px}
 .showcase__head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
 .showcase__head h3{font-size:1.1rem}
-.showcase__row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
-.showcase__row::-webkit-scrollbar{height:7px}
-.showcase__row::-webkit-scrollbar-thumb{background:#cfdaea;border-radius:9px}
-.scard{flex:0 0 168px;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;scroll-snap-align:start;border:1px solid var(--line)}
+.showcase__row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.scard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--line)}
 .scard__img{height:120px;position:relative;display:grid;place-items:center;background:linear-gradient(135deg,#0a6fd6,#7b3ff2);overflow:hidden}
 .scard__img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .scard__img .scard__ph{font-size:2.4rem;color:#fff;opacity:0}
@@ -190,6 +188,8 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
 .foot{position:fixed;bottom:0;inset-inline:0;display:flex;align-items:center;justify-content:space-between;
   gap:10px;padding:8px 16px;background:#fff;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted);z-index:20}
 .empty{padding:26px;text-align:center;color:var(--muted)}
+.courier-btn{font-weight:800;margin:2px 0;transition:transform .1s}
+.courier-btn:hover{transform:translateY(-1px)}
 
 </style>
 </head>
@@ -869,9 +869,9 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
 
   // Optional delivery-courier companies (order a courier per shipment)
   const COURIERS = [
-    { id: 'gett',  name: 'Gett',       url: 'https://www.gett.com/il/business/delivery/' },
-    { id: 'yango', name: 'Yango',      url: 'https://yango.com/he_il/business/delivery/' },
-    { id: 'wolt',  name: 'Wolt Drive', url: 'https://explore.wolt.com/he/isr/wolt-drive' },
+    { id: 'gett',  name: 'Gett',       url: 'https://www.gett.com/il/business/delivery/',  color: '#111827', fg: '#fff' },
+    { id: 'yango', name: 'Yango',      url: 'https://yango.com/he_il/business/delivery/',   color: '#ff3333', fg: '#fff' },
+    { id: 'wolt',  name: 'Wolt Drive', url: 'https://explore.wolt.com/he/isr/wolt-drive',   color: '#00c2e8', fg: '#06323a' },
   ];
 
   // Real payment (Sumit) checkout page — dynamic-amount payment page
@@ -1024,7 +1024,7 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
     const picks = ['LG-10294', 'LG-71043', 'LG-75313', 'LG-42143', 'LG-42115', 'LG-10311', 'LG-21318', 'LG-10497']
       .map(s => DB.items().find(i => i.sku === s)).filter(Boolean);
     el.innerHTML = `
-      <div class="showcase__head"><h3>🧱 סדרות אחרונות במלאי</h3><span class="muted">גלילה →</span></div>
+      <div class="showcase__head"><h3>🧱 סדרות אחרונות במלאי</h3><span class="muted">הסטים הנמכרים ביותר</span></div>
       <div class="showcase__row">
         ${picks.map(it => `<div class="scard">
           <div class="scard__img">
@@ -1301,8 +1301,11 @@ textarea.mono{font-family:ui-monospace,Consolas,monospace;min-height:120px;line-
       if (o.status === 'packed') act = `<button class="btn btn--tiny btn--ok" data-ship="${o.id}">שלח והפק קבלה</button>`;
       else if (o.status === 'shipping') act = `<button class="btn btn--tiny" data-next="${o.id}">→ נשלח</button>`;
       else act = `<button class="btn btn--tiny btn--line" data-next="${o.id}">→ נמסר</button>`;
-      const courierBtns = COURIERS.map(c =>
-        `<button class="btn btn--tiny ${o.courier === c.name ? 'btn--ok' : 'btn--line'}" data-courier="${o.id}" data-co="${c.id}">${c.name}</button>`).join(' ');
+      const courierBtns = COURIERS.map(c => {
+        const sel = o.courier === c.name;
+        return `<button class="btn btn--tiny courier-btn" data-courier="${o.id}" data-co="${c.id}"
+          style="background:${c.color};color:${c.fg};border:2px solid ${sel ? '#16202c' : 'transparent'};box-shadow:${sel ? '0 0 0 2px #16202c33' : 'none'}">${sel ? '✓ ' : ''}${c.name}</button>`;
+      }).join(' ');
       return `<tr>
         <td class="num">${o.id}</td><td>${o.customer}</td>
         <td style="white-space:normal">${o.address}<br><span class="muted">${o.phone || ''}</span></td>
