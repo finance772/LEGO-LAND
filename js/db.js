@@ -144,17 +144,23 @@
   }
 
   // ---- persistence --------------------------------------------------
+  // Safe storage: falls back to in-memory when localStorage is blocked
+  // (e.g. opening the file directly via file:// on some browsers / iOS).
   let _cache = null;
+  const _mem = {};
+  function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return k in _mem ? _mem[k] : null; } }
+  function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { _mem[k] = v; } }
+
   function load() {
     if (_cache) return _cache;
     try {
-      const raw = localStorage.getItem(KEY);
+      const raw = safeGet(KEY);
       _cache = raw ? JSON.parse(raw) : seed();
     } catch (e) { _cache = seed(); }
     save();
     return _cache;
   }
-  function save() { if (_cache) localStorage.setItem(KEY, JSON.stringify(_cache)); emit(); }
+  function save() { if (_cache) safeSet(KEY, JSON.stringify(_cache)); emit(); }
   function reset() { _cache = seed(); save(); return _cache; }
 
   // ---- change events ------------------------------------------------
