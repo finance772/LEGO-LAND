@@ -19,6 +19,20 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- Early diagnostic: surface any boot error visibly instead of a dead screen -->
+  <script>
+    window.__legoErr = function (msg) {
+      var b = document.getElementById('bootErr');
+      if (!b) {
+        b = document.createElement('div'); b.id = 'bootErr';
+        b.style.cssText = 'position:fixed;inset-inline:0;top:0;z-index:9999;background:#d01012;color:#fff;padding:10px 14px;font:14px/1.4 Arial;direction:rtl';
+        document.body.appendChild(b);
+      }
+      b.textContent = '⚠ שגיאה בטעינה: ' + msg + ' — נסה לפתוח את הקובץ בדפדפן Chrome/Safari (לא בתצוגה מקדימה).';
+    };
+    window.addEventListener('error', function (e) { window.__legoErr(e.message || e.error); });
+  </script>
+
   <!-- App bar -->
   <header class="appbar">
     <div class="appbar__brand">

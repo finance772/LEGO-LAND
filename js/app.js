@@ -607,9 +607,13 @@
   // ============================================================
   //  Boot + live loop
   // ============================================================
-  DB.on(() => { renderHome(); refreshOpenView(); });
-  renderHome();
-  tick();
-  setInterval(tick, 1000);
-  setInterval(() => { if ($('#modal').hidden) { renderLiveOrders(); renderLiveStock(); } }, 5000);
+  DB.on(() => { try { renderHome(); refreshOpenView(); } catch (e) {} });
+  try {
+    renderHome();
+    tick();
+    setInterval(tick, 1000);
+    setInterval(() => { if ($('#modal').hidden) { renderLiveOrders(); renderLiveStock(); } }, 5000);
+  } catch (e) {
+    if (window.__legoErr) window.__legoErr(e && e.message ? e.message : String(e));
+  }
 })();
