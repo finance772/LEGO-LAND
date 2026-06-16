@@ -526,8 +526,7 @@
       <div id="olLines"></div>
       <div class="actions"><button class="btn btn--line btn--tiny" id="olAdd">+ הוסף פריט</button></div>
       <div class="actions" style="margin-top:14px">
-        <button class="btn btn--ok" id="olCreate">צור הזמנה</button>
-        <button class="btn" id="olCreatePay">צור ואשר תשלום</button>
+        <button class="btn btn--ok" id="olCreatePay">סיום הזמנה ותשלום</button>
       </div>
       <template id="olRowTpl">
         <div class="grid2 olrow" style="align-items:end">
@@ -546,7 +545,6 @@
       if (!lines.length) { toast('הוסף לפחות פריט אחד'); return null; }
       return DB.createOrder({ customer: name, phone: $('#olPhone').value.trim(), address: $('#olAddr').value.trim() || '-', courier: $('#olCourier').value, lines });
     };
-    $('#olCreate').addEventListener('click', () => { const o = collect(); if (o) { toast('נוצרה הזמנה ' + o.id); closeModal(); } });
     $('#olCreatePay').addEventListener('click', () => {
       const o = collect(); if (!o) return;
       try { DB.approvePayment(o.id, 'ויזה'); toast('הזמנה ' + o.id + ' נוצרה והתשלום אושר'); closeModal(); }
